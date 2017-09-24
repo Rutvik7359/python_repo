@@ -27,7 +27,7 @@ class MyCircle(pygame.sprite.Sprite):
         self.image.fill(WHITE)
         cx = self.rect.centerx
         cy = self.rect.centery
-        pygame.draw.circle(self.image, color, (width/2, height/2), cx, cy)
+        pygame.draw.circle(self.image, color, (int(width/2), int(height/2)), cx, cy)
         self.rect = self.image.get_rect()
 
     def update(self):
@@ -35,7 +35,9 @@ class MyCircle(pygame.sprite.Sprite):
 
 class Simulation:
     def __init__(self):
-        print ("")
+        self.pos = [0, 0]
+        self.fric = 0.0001
+        self.m = 1.0
 
     def f(self, t, state, arg1, arg2):
         print ("")

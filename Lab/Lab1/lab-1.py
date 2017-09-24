@@ -50,14 +50,10 @@ class Simulation:
     # Setup to start from top of the screen or from last recorded position
     # with last recorded velocity
     def setup(self, y, vy, mass):
-        if os.path.exists(DATA_FILE):
-            data = last_vals_from_file(DATA_FILE)
-            (self.y, self.vy) = (float(data[0]), float(data[1]))
-        else:
-            self.y = y
-            self.vy = vy
-
+        self.y = y
+        self.vy = vy
         self.mass = mass
+
         self.times = [self.cur_time*1000]
         self.positions = [self.y]
         self.velocities = [self.vy]
@@ -115,9 +111,15 @@ def main():
     my_sprite = MyCircle(RED, 30, 30)
     my_group = pygame.sprite.Group(my_sprite)
 
+    
+    (y, vy) = (460,0)
+    if os.path.exists(DATA_FILE):
+        data = last_vals_from_file(DATA_FILE)
+        (y, vy) = (float(data[0]), float(data[1]))
+
     # setting up simulation
     sim = Simulation()
-    sim.setup(460, 0, 1)
+    sim.setup(y, vy, 1)
 
     print ('--------------------------------')
     print ('Usage:')
