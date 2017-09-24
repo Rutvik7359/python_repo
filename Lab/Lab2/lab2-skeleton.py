@@ -36,8 +36,19 @@ class MyCircle(pygame.sprite.Sprite):
 class Simulation:
     def __init__(self):
         self.pos = [0, 0]
-        self.fric = 0.0001
         self.m = 1.0
+        self.trace_x = 0
+        self.trace_y = 0
+        self.vx = 0
+        self.vy = 0
+        self.mass = 0
+
+        self.f = 0.0001
+        self.g = -9.8 # gravity acts downwards
+        self.dt = 0.033 # 33 millisecond, which corresponds to 30 fps
+        self.cur_time = 0
+
+        self.paused = True 
 
     def f(self, t, state, arg1, arg2):
         print ("")
