@@ -1,6 +1,8 @@
 import pygame, sys
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
+import os
 
 # set up the colors
 BLACK = (0, 0, 0)
@@ -8,6 +10,8 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+
+DATA_FILE = 'data.csv'
 
 # clock object that ensure that animation has the same
 # on all machines, regardless of the actual machine speed.
@@ -26,7 +30,7 @@ class MyCircle(pygame.sprite.Sprite):
         self.image.fill(WHITE)
         cx = self.rect.centerx
         cy = self.rect.centery
-        pygame.draw.circle(self.image, color, (width/2, height/2), cx, cy)
+        pygame.draw.circle(self.image, color, (int(width/2), int(height/2)), cx, cy)
         self.rect = self.image.get_rect()
 
     def update(self):
@@ -43,13 +47,20 @@ class Simulation:
 
         self.paused = True # starting in paused mode
 
+    # Setup to start from top of the screen or from last recorded position
+    # with last recorded velocity
     def setup(self, y, vy, mass):
-        self.y = y
-        self.vy = vy
-        self.mass = mass
+        if os.path.exists(DATA_FILE):
+            data = last_vals_from_file(DATA_FILE)
+            (self.y, self.vy) = (float(data[0]), float(data[1]))
+        else:
+            self.y = y
+            self.vy = vy
 
+        self.mass = mass
         self.times = [self.cur_time*1000]
         self.positions = [self.y]
+        self.velocities = [self.vy]
 
     def step(self):
         self.y += self.vy
@@ -58,6 +69,7 @@ class Simulation:
 
         self.times.append(self.cur_time * 1000)
         self.positions.append(self.y)
+        self.velocities.append(self.vy)
 
     def pause(self):
         self.paused = True
@@ -69,10 +81,27 @@ def sim_to_screen_y(win_height, y):
     '''flipping y, since we want our y to increase as we move up'''
     return win_height - y
 
+# Helper function to write data to csv file
+# Data input is array of position values and velocity values
+def write_to_file(file, data):
+    with open(file, 'w') as data_csv:
+        writer=csv.writer(data_csv, delimiter=',')
+        writer.writerows(zip(data[0], data[1]))
+
+# Helper function to read from csv file and return two values
+# Return (last_recorded_position, last_recorded_velocity) 
+def last_vals_from_file(file):
+    with open(file, 'r') as data_csv:
+        reader = list(csv.reader(data_csv))
+        return reader[-1][0], reader[-1][1]
+
+
 def main():
 
     # initializing pygame
     pygame.init()
+
+    end_of_screen = False;
 
     # top left corner is (0,0) top right (640,0) bottom left (0,480)
     # and bottom right is (640,480).
@@ -90,12 +119,13 @@ def main():
     sim = Simulation()
     sim.setup(460, 0, 1)
 
-    print '--------------------------------'
-    print 'Usage:'
-    print 'Press (r) to start/resume simulation'
-    print 'Press (p) to pause simulation'
-    print 'Press (space) to step forward simulation when paused'
-    print '--------------------------------'
+    print ('--------------------------------')
+    print ('Usage:')
+    print ('Press (r) to start/resume simulation')
+    print ('Press (p) to pause simulation')
+    print ('Press (q) to quit simulation')
+    print ('Press (space) to step forward simulation when paused')
+    print ('--------------------------------')
 
     while True:
         # 30 fps
@@ -117,6 +147,9 @@ def main():
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
             sim.resume()
             continue
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+            pygame.quit()
+            break
         else:
             pass
 
@@ -127,6 +160,7 @@ def main():
         pygame.display.flip()
 
         if sim_to_screen_y(win_height, sim.y) > win_height:
+            end_of_screen = True
             pygame.quit()
             break
 
@@ -147,6 +181,23 @@ def main():
     plt.xlabel('Time (ms)')
     plt.ylabel('y position')
     plt.title('Height vs. Time')
+
+    # velocity vs time data to plot
+    vel_vs_times = np.vstack([sim.times, sim.velocities])
+
+    plt.figure(2)
+    plt.plot(vel_vs_times[0,:], vel_vs_times[1,:])
+    plt.xlabel('Time (ms)')
+    plt.ylabel('velocity')
+    plt.title('Velocity vs. Time')
+
+    # Writes to file if end of screen
+    if end_of_screen:
+        if os.path.exists(DATA_FILE):
+            os.remove(DATA_FILE)
+    else:
+        write_to_file(DATA_FILE, [pos_vs_times[1,:], vel_vs_times[1,:]])
+
     plt.show()
 
 if __name__ == '__main__':
