@@ -1,7 +1,10 @@
 import pygame, sys
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 from scipy.integrate import ode
+
+
 
 # set up the colors
 BLACK = (0, 0, 0)
@@ -36,31 +39,43 @@ class MyCircle(pygame.sprite.Sprite):
 class Simulation:
     def __init__(self):
         self.pos = [0, 0]
-        self.m = 1.0
-        self.trace_x = 0
-        self.trace_y = 0
-        self.vx = 0
-        self.vy = 0
-        self.mass = 0
-
-        self.f = 0.0001
+        self.vel = [0, 0]
+        self.fric = 0.0001 # friction coefficient
         self.g = -9.8 # gravity acts downwards
         self.dt = 0.033 # 33 millisecond, which corresponds to 30 fps
         self.cur_time = 0
 
         self.paused = True 
 
+        self.solver = ode(self.f)
+        self.solver.set_integrator('dop853')
+        self.solver.set_f_params(self.fric, self.g)
+
     def f(self, t, state, arg1, arg2):
-        print ("")
+        dx  = state[2]
+        dy  = state[3]
+        dvx = - state[2] * arg1
+        dvy = arg2 - state[3] * arg1
+        return [dx, dy, dvx, dvy]  
         
     def setup(self, speed, angle_degrees):
+        self.vel[0] = speed*math.cos(angle_degrees)
+        self.vel[1] = speed*math.sin(angle_degrees)
+        self.cur_time = 0
+        self.solver.set_initial_value([self.pos[0],self.pos[1], self.vel[0], self.vel[1]], self.cur_time)
         self.trace_x = [self.pos[0]]
         self.trace_y = [self.pos[1]]
 
     def step(self):
         self.cur_time += self.dt
 
-        # TO DO
+        if self.solver.successful():
+            self.solver.integrate(self.cur_time)
+            self.pos = self.solver.y[0:2]
+            self.vel = self.solver.y[2:4]
+
+        self.trace_x.append(self.pos[0])
+        self.trace_y.append(self.pos[1])
 
     def pause(self):
         self.paused = True
@@ -75,6 +90,9 @@ def sim_to_screen(win_height, x, y):
 
     return x, win_height - y
 
+def deg_to_radians(deg):
+    return math.pi*deg/180
+
 def main():
 
     # initializing pygame
@@ -88,12 +106,12 @@ def main():
 
     # setting up a sprite group, which will be drawn on the
     # screen
-    my_sprite = MyCircle(RED, 5, 5)
+    my_sprite = MyCircle(RED, 20, 20)
     my_group = pygame.sprite.Group(my_sprite)
 
     # setting up simulation
     sim = Simulation()
-    sim.setup(50., 45.)
+    sim.setup(50., deg_to_radians(90))
 
     print ('--------------------------------')
     print ('Usage:')
