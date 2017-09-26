@@ -4,8 +4,6 @@ import numpy as np
 import math
 from scipy.integrate import ode
 
-
-
 # set up the colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -42,7 +40,7 @@ class Simulation:
         self.vel = [0, 0]
         self.fric = 0.0001 # friction coefficient
         self.g = -9.8 # gravity acts downwards
-        self.dt = 0.033 # 33 millisecond, which corresponds to 30 fps
+        self.dt = 0.050 # 33 millisecond, which corresponds to 30 fps
         self.cur_time = 0
 
         self.paused = True 
@@ -73,9 +71,8 @@ class Simulation:
             self.solver.integrate(self.cur_time)
             self.pos = self.solver.y[0:2]
             self.vel = self.solver.y[2:4]
-
-        self.trace_x.append(self.pos[0])
-        self.trace_y.append(self.pos[1])
+            self.trace_x.append(self.pos[0])
+            self.trace_y.append(self.pos[1])        
 
     def pause(self):
         self.paused = True
@@ -98,6 +95,7 @@ def main():
     # initializing pygame
     pygame.init()
 
+
     # top left corner is (0,0)
     win_width = 640
     win_height = 640
@@ -106,17 +104,28 @@ def main():
 
     # setting up a sprite group, which will be drawn on the
     # screen
-    my_sprite = MyCircle(RED, 20, 20)
+    my_sprite = MyCircle(RED, 10, 10)
     my_group = pygame.sprite.Group(my_sprite)
 
     # setting up simulation
     sim = Simulation()
-    sim.setup(50., deg_to_radians(90))
+    deg = 45
+
+    if (len(sys.argv) >= 2):
+        deg = float(sys.argv[1])
+    sim.setup(50., deg_to_radians(deg))
 
     print ('--------------------------------')
     print ('Usage:')
+    print ('python lab2.py <angle in degrees>')
+    print ('or')
+    print ('python lab2.py')
+    print ('(Angle default is 45 degrees')
+    print ('--------------------------------')
+    print ('Usage during simulation:')
     print ('Press (r) to start/resume simulation')
     print ('Press (p) to pause simulation')
+    print ('Press (q) to quit simulation')
     print ('Press (space) to step forward simulation when paused')
     print ('--------------------------------')
 
@@ -139,6 +148,9 @@ def main():
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
             sim.resume()
             continue
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+            pygame.quit()
+            break
         else:
             pass
 
