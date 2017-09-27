@@ -11,7 +11,8 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
-DEFAULT_ANGLE = 45
+DEFAULT_ANGLE = 45.
+DEFAULT_SPEED = 50.
 
 # clock object that ensure that animation has the same
 # on all machines, regardless of the actual machine speed.
@@ -42,7 +43,7 @@ class Simulation:
         self.vel = [0, 0]
         self.fric = 0.0001 # friction coefficient
         self.g = -9.8 # gravity acts downwards
-        self.dt = 0.050 # 33 millisecond, which corresponds to 30 fps
+        self.dt = 0.033 # 33 millisecond, which corresponds to 30 fps
         self.cur_time = 0
 
         self.paused = True 
@@ -93,23 +94,36 @@ def deg_to_rad(deg):
     return math.pi*deg/180
 
 def usage():
-	print ('--------------------------------')
+    print ('--------------------------------')
     print ('Usage:')
     print ('--------------------------------')
-    print ('python lab2.py <angle(degrees)>')
+    print ('python lab2.py <angle(degrees)> <speed>')
     print ('or')
     print ('python lab2.py')
-    print ('(Angle default is 45 degrees)\n')
+    print ('(Angle default: 45°)')
+    print ('(Speed default: 50)')
     print ('--------------------------------')
 
 def main():
+
+    # Error checking command line args and setting angle
+    num_args = len(sys.argv) - 1
+    if num_args == 2:
+        angle = float(sys.argv[1])
+        speed = float(sys.argv[2])
+    elif num_args == 1 or num_args > 2:
+        usage()
+        sys.exit(0)
+    else:
+        angle = DEFAULT_ANGLE
+        speed = DEFAULT_SPEED
 
     # initializing pygame
     pygame.init()
 
     # top left corner is (0,0)
     win_width = 640
-    win_height = 640
+    win_height = 480
     screen = pygame.display.set_mode((win_width, win_height))
     pygame.display.set_caption('2D projectile motion')
 
@@ -120,17 +134,9 @@ def main():
 
     # setting up simulation
     sim = Simulation()
-    
-    num_args = len(sys.argv) - 1
-    if num_args == 1:
-        deg = float(sys.argv[1])
-    elif num_args > 1:
-    	usage()
-    	sys.exit(0)
 
-    sim.setup(50., deg_to_rad(DEFAULT_ANGLE))
+    sim.setup(speed, deg_to_rad(angle))
 
-    usage()
     print ('Usage during simulation:')
     print ('--------------------------------')
     print ('Press (r) to start/resume simulation')
@@ -187,8 +193,14 @@ def main():
     plt.ylabel('y')
     plt.axis('equal')
     plt.title('2D projectile trajectory')
-    plt.show()
+    #plt.show()
 
+    print("Angle:       " + str(angle) + "°")
+    print("Speed:       " + str(speed))
+    print("Distance(x): " + str(sim.trace_x[-1]))
+    
+    #with open("out.txt", "a") as myfile:
+    #    myfile.write(str(angle) + ", " + str(speed) + ", " + str(sim.trace_x[-1]) + "\n")
 
 if __name__ == '__main__':
     main()
