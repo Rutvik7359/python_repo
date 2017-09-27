@@ -11,6 +11,8 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+DEFAULT_ANGLE = 45
+
 # clock object that ensure that animation has the same
 # on all machines, regardless of the actual machine speed.
 clock = pygame.time.Clock()
@@ -87,14 +89,23 @@ def sim_to_screen(win_height, x, y):
 
     return x, win_height - y
 
-def deg_to_radians(deg):
+def deg_to_rad(deg):
     return math.pi*deg/180
+
+def usage():
+	print ('--------------------------------')
+    print ('Usage:')
+    print ('--------------------------------')
+    print ('python lab2.py <angle(degrees)>')
+    print ('or')
+    print ('python lab2.py')
+    print ('(Angle default is 45 degrees)\n')
+    print ('--------------------------------')
 
 def main():
 
     # initializing pygame
     pygame.init()
-
 
     # top left corner is (0,0)
     win_width = 640
@@ -109,20 +120,19 @@ def main():
 
     # setting up simulation
     sim = Simulation()
-    deg = 45
-
-    if (len(sys.argv) >= 2):
+    
+    num_args = len(sys.argv) - 1
+    if num_args == 1:
         deg = float(sys.argv[1])
-    sim.setup(50., deg_to_radians(deg))
+    elif num_args > 1:
+    	usage()
+    	sys.exit(0)
 
-    print ('--------------------------------')
-    print ('Usage:')
-    print ('python lab2.py <angle in degrees>')
-    print ('or')
-    print ('python lab2.py')
-    print ('(Angle default is 45 degrees')
-    print ('--------------------------------')
+    sim.setup(50., deg_to_rad(DEFAULT_ANGLE))
+
+    usage()
     print ('Usage during simulation:')
+    print ('--------------------------------')
     print ('Press (r) to start/resume simulation')
     print ('Press (p) to pause simulation')
     print ('Press (q) to quit simulation')
