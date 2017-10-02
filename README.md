@@ -2,7 +2,7 @@
 
 ## (CSCI 3010U) Simulation and Modelling:
 ### Labs
-[Lab 1](csci_3010u/Lab/Lab1/)  
+[Lab 1](csci_3010u/Lab/Lab1/)(![Instructions](csci_3010u/Lab/Lab1/lab-1.pdf))
 [Lab 2](csci_3010u/Lab/Lab2/)  
 [Lab 3](csci_3010u/Lab/Lab3/)  
 [Lab 4](csci_3010u/Lab/Lab4/)  
