@@ -3,29 +3,33 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import ode
 
-USE_RK4 = True
+
+USE_RK4     = True
 MAKE_STABLE = True
 
 # set up the colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-RED = (255, 0, 0)
+RED   = (255, 0, 0)
 GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-
-# image files
-EARTH_IMAGE = 'earth.png'
-MOON_IMAGE = 'moon.png'
+BLUE  = (0, 0, 255)
 
 # constants
-G = 6.674e-11 # N kg-2 m^2
-EARTH_MASS = 5.972e24 # kg
-MOON_MASS = 7.34767309e22 # kg
-DISTANCE = 384400000. # m
-INITIAL_EARTH_POS = np.array([0, 0])
-INITIAL_MOON_POS = np.array([int(DISTANCE), 0])
-INITIAL_MOON_VELOCITY = np.array([0, 1000])
-TIME_STEP = 1000.0
+G              = 6.674e-11 # N kg-2 m^2
+EARTH_MASS     = 5.972e24 # kg
+MOON_MASS      = 7.34767309e22 # kg
+DISTANCE       = 384400000. # m
+INIT_EARTH_POS = np.array([0, 0])
+INIT_MOON_POS  = np.array([DISTANCE, 0])
+INIT_MOON_VEL  = np.array([0, 1000])
+TIME_STEP      = 1000.0
+EARTH          = 'earth'
+MOON           = 'moon'
+
+# image files
+EARTH_IMG = EARTH + '.png'
+MOON_IMG  = MOON  + '.png'
+
 
 # clock object that ensure that animation has the same
 # on all machines, regardless of the actual machine speed.
@@ -85,9 +89,9 @@ class HeavenlyBody(pygame.sprite.Sprite):
         self.pos = np.array(pos)
 
     def set_vel(self, vel):
-        if MAKE_STABLE and self.name == 'moon':
+        if MAKE_STABLE and self.name == MOON:
             self.other_mass = EARTH_MASS
-            self.other_pos = INITIAL_EARTH_POS
+            self.other_pos = INIT_EARTH_POS
 
             _, r = self.get_force_and_rad(self.other_pos, self.pos)
 
@@ -123,7 +127,7 @@ class HeavenlyBody(pygame.sprite.Sprite):
                     self.vel = new_vel
                     self.pos = new_pos
 
-                if self.name == 'earth':
+                if self.name == EARTH:
                     self.distances.append(r)
 
     def get_force_and_rad(self, other_pos, pos):
@@ -155,10 +159,10 @@ class Universe:
             # Comput positions for screen
             obj = self.objects_dict[o]
 
-            if obj.name == 'moon':
-                other = self.objects_dict['earth']
+            if obj.name == MOON:
+                other = self.objects_dict[EARTH]
             else:
-                other = self.objects_dict['moon']
+                other = self.objects_dict[MOON]
             obj.other_pos = other.pos
 
             obj.update1(self.objects_dict, self.dt)
@@ -198,10 +202,10 @@ def main():
     # Create a Universe object, which will hold our heavenly bodies (planets, stars, moons, etc.)
     universe = Universe()
 
-    earth = HeavenlyBody('earth', EARTH_MASS, radius=32, imagefile=EARTH_IMAGE)
-    earth.setup(INITIAL_EARTH_POS)
-    moon = HeavenlyBody('moon', MOON_MASS, WHITE, radius=10, imagefile=MOON_IMAGE)
-    moon.setup(INITIAL_MOON_POS, INITIAL_MOON_VELOCITY)
+    earth = HeavenlyBody(EARTH, EARTH_MASS, radius=32, imagefile=EARTH_IMG)
+    earth.setup(INIT_EARTH_POS)
+    moon = HeavenlyBody(MOON, MOON_MASS, WHITE, radius=10, imagefile=MOON_IMG)
+    moon.setup(INIT_MOON_POS, INIT_MOON_VEL)
 
     universe.add_body(earth)
     universe.add_body(moon)
