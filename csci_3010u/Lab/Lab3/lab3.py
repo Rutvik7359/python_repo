@@ -4,6 +4,7 @@ import numpy as np
 from scipy.integrate import ode
 
 
+# control environment vars
 USE_RK4     = True
 MAKE_STABLE = True
 
@@ -19,12 +20,14 @@ G              = 6.674e-11 # N kg-2 m^2
 EARTH_MASS     = 5.972e24 # kg
 MOON_MASS      = 7.34767309e22 # kg
 DISTANCE       = 384400000. # m
-INIT_EARTH_POS = np.array([0, 0])
-INIT_MOON_POS  = np.array([DISTANCE, 0])
-INIT_MOON_VEL  = np.array([0, 1000])
-TIME_STEP      = 1000.0
 EARTH          = 'earth'
 MOON           = 'moon'
+
+# initial setup variables
+INIT_EARTH_POS = np.array([0, 0])
+INIT_MOON_POS  = np.array([DISTANCE, 0])
+INIT_MOON_VEL  = np.array([0, 900]) # Does not use this if MAKE_STABLE enabled
+TIME_STEP      = 5500.0
 
 # image files
 EARTH_IMG = EARTH + '.png'
@@ -70,10 +73,9 @@ class HeavenlyBody(pygame.sprite.Sprite):
             self.solver.set_integrator('dop853')
 
     def f(self, t, state):
-        f, r = self.get_force_and_rad(self.other_pos, state[0:2])
-
-        dx, dy = state[2:4] #velocity
-        dvx, dvy = f/self.mass
+        f, _ = self.get_force_and_rad(self.other_pos, state[0:2])
+        dx, dy = state[2:4]    # velocity
+        dvx, dvy = f/self.mass # accel
 
         return [dx, dy, dvx, dvy]
 
@@ -92,7 +94,7 @@ class HeavenlyBody(pygame.sprite.Sprite):
             self.other_mass = EARTH_MASS
             self.other_pos = INIT_EARTH_POS
 
-            _, r = self.get_force_and_rad(self.other_pos, self.pos)
+            _, r = self.get_rad(self.other_pos, self.pos)
 
             # derive velocity from making centrifugal force and gravitational force equal
             self.vel = np.array([0, np.sqrt(self.G*self.other_mass/r)])
@@ -105,17 +107,17 @@ class HeavenlyBody(pygame.sprite.Sprite):
             if o != self.name:
                 other = objects[o]
 
-                f, r= self.get_force_and_rad(other.pos, self.pos)
+                f, r = self.get_force_and_rad(other.pos, self.pos)
 
                 print 'Force on', self.name, ' from', other.name, '=', f
                 print 'Mass-1', self.mass, 'mass-2', other.mass
                 print 'G', self.G
-                print 'Distance', r
-                print 'Vel', self.vel
+                print 'Distance', np.linalg.norm(r)
+                print 'Vel', np.linalg.norm(self.vel)
 
                 if USE_RK4:
+                    self.cur_time += dt
                     if self.solver.successful():
-                        self.cur_time += dt
 
                         self.solver.integrate(self.cur_time)
                         self.pos = self.solver.y[0:2]
@@ -129,9 +131,14 @@ class HeavenlyBody(pygame.sprite.Sprite):
                 if self.name == EARTH:
                     self.distances.append(r)
 
-    def get_force_and_rad(self, other_pos, pos):
-        d = (other_pos - pos)
-        r = np.linalg.norm(d)
+    # Gets radial distance and magnitude of it between two positions
+    def get_rad(self, pos1, pos2):
+        d = pos1 - pos2
+        return d, np.linalg.norm(d)
+
+    # Gets the force and radial distance between two positions
+    def get_force_and_rad(self, pos1, pos2):
+        d, r = self.get_rad(pos1, pos2)
         u = d / r
         f = u * G * EARTH_MASS * MOON_MASS / (r*r)
 
