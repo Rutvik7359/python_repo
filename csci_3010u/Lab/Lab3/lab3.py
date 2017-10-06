@@ -123,6 +123,7 @@ class Universe:
         self.objects_dict = {}
         self.objects = pygame.sprite.Group()
         self.dt = 1000.0
+        self.paused = False
 
     def add_body(self, body):
         self.objects_dict[body.name] = body
@@ -156,6 +157,12 @@ class Universe:
     def draw(self, screen):
         self.objects.draw(screen)
 
+    def pause(self):
+        self.paused = True
+
+    def resume(self):
+        self.paused = False
+
 def main():
 
     print 'Press q to quit'
@@ -184,9 +191,7 @@ def main():
     iter_per_frame = 10
 
     frame = 0
-    while frame < total_frames:
-        print 'Frame number', frame        
-
+    while frame < total_frames:  
         event = pygame.event.poll()
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -195,17 +200,22 @@ def main():
             pygame.quit()
             sys.exit(0)
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
-            pygame.pause()
-            sys.exit(0)
+            universe.pause()
+            continue
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+            universe.resume()
+            continue
         else:
             pass
 
-        universe.update()
-        if frame % iter_per_frame == 0:
-            screen.fill(BLACK) # clear the background
-            universe.draw(screen)
-            pygame.display.flip()
-        frame += 1
+        if not universe.paused:
+            print 'Frame number', frame 
+            universe.update()
+            if frame % iter_per_frame == 0:
+                screen.fill(BLACK) # clear the background
+                universe.draw(screen)
+                pygame.display.flip()
+            frame += 1
 
     pygame.quit()
 
