@@ -27,7 +27,7 @@ MOON           = 'moon'
 INIT_EARTH_POS = np.array([0, 0])
 INIT_MOON_POS  = np.array([DISTANCE, 0])
 INIT_MOON_VEL  = np.array([0, 900]) # Does not use this if MAKE_STABLE enabled
-TIME_STEP      = 5500.0
+TIME_STEP      = 1000.0
 
 # image files
 EARTH_IMG = EARTH + '.png'
