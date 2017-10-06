@@ -64,7 +64,6 @@ class HeavenlyBody(pygame.sprite.Sprite):
         self.cur_time = 0
         self.other_pos = np.array([0,0])
         self.other_mass = 0
-        self.damp = 0.01
 
         if USE_RK4:
             self.solver = ode(self.f)
