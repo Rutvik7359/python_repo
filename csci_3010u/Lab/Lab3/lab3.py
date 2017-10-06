@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import ode
 
-rk4 = False
+USE_RK4 = True
+MAKE_STABLE = True
 
 # set up the colors
 BLACK = (0, 0, 0)
@@ -18,10 +19,13 @@ MOON_IMAGE = 'moon.png'
 
 # constants
 G = 6.674e-11 # N kg-2 m^2
-Earth_Mass = 5.972e24 # kg
-Moon_Mass = 7.34767309e22 # kg
-Distance = 384400000. # m
-
+EARTH_MASS = 5.972e24 # kg
+MOON_MASS = 7.34767309e22 # kg
+DISTANCE = 384400000. # m
+INITIAL_EARTH_POS = np.array([0, 0])
+INITIAL_MOON_POS = np.array([int(DISTANCE), 0])
+INITIAL_MOON_VELOCITY = np.array([0, 1000])
+TIME_STEP = 1000.0
 
 # clock object that ensure that animation has the same
 # on all machines, regardless of the actual machine speed.
@@ -32,8 +36,8 @@ def load_image(name):
     image = pygame.image.load(name)
     return image
 
+
 class HeavenlyBody(pygame.sprite.Sprite):
-    
     def __init__(self, name, mass, color=WHITE, radius=0, imagefile=None):
         pygame.sprite.Sprite.__init__(self)
 
@@ -55,29 +59,42 @@ class HeavenlyBody(pygame.sprite.Sprite):
         self.distances = []
         self.cur_time = 0
         self.other_pos = np.array([0,0])
+        self.other_mass = 0
         self.damp = 0.01
 
-        if rk4:
+        if USE_RK4:
             self.solver = ode(self.f)
             self.solver.set_integrator('dop853')
 
     def f(self, t, state):
         f, r = self.get_force_and_rad(self.other_pos, state[0:2])
 
-        dx = state[2] - state[2]*self.damp# velocity in x dir
-        dy = state[3] - state[3]*self.damp # velocity in y dir
-        dvx = f[0]/self.mass
-        dvy = f[1]/self.mass
+        dx, dy = state[2:4] #velocity
+        dvx, dvy = f/self.mass
 
         return [dx, dy, dvx, dvy]
+
+    def setup(self, pos, vel=np.array([0,0])):
+        self.set_pos(pos)
+        self.set_vel(vel)
+
+        if USE_RK4:
+            self.solver.set_initial_value([self.pos[0], self.pos[1], self.vel[0], self.vel[1]], self.cur_time)
 
     def set_pos(self, pos):
         self.pos = np.array(pos)
 
     def set_vel(self, vel):
-        self.vel = np.array(vel)
-        if rk4:
-            self.solver.set_initial_value([self.pos[0], self.pos[1], self.vel[0], self.vel[1]], self.cur_time)
+        if MAKE_STABLE and self.name == 'moon':
+            self.other_mass = EARTH_MASS
+            self.other_pos = INITIAL_EARTH_POS
+
+            _, r = self.get_force_and_rad(self.other_pos, self.pos)
+
+            # derive velocity from making centrifugal force and gravitational force equal
+            self.vel = np.array([0, np.sqrt(self.G*self.other_mass/r)])
+        else:    
+            self.vel = np.array(vel)
 
     def update1(self, objects, dt):
         force = np.array([0,0])
@@ -93,7 +110,7 @@ class HeavenlyBody(pygame.sprite.Sprite):
                 print 'Distance', r
                 print 'Vel', self.vel
 
-                if rk4:
+                if USE_RK4:
                     if self.solver.successful():
                         self.cur_time += dt
 
@@ -113,16 +130,17 @@ class HeavenlyBody(pygame.sprite.Sprite):
         d = (other_pos - pos)
         r = np.linalg.norm(d)
         u = d / r
-        f = u * G * Earth_Mass * Moon_Mass / (r*r)
+        f = u * G * EARTH_MASS * MOON_MASS / (r*r)
 
         return f, r
 
+
 class Universe:
     def __init__(self):
-        self.w, self.h = 2.6*Distance, 2.6*Distance 
+        self.w, self.h = 2.6*DISTANCE, 2.6*DISTANCE 
         self.objects_dict = {}
         self.objects = pygame.sprite.Group()
-        self.dt = 1000.0
+        self.dt = TIME_STEP
         self.paused = False
 
     def add_body(self, body):
@@ -130,17 +148,18 @@ class Universe:
         self.objects.add(body)
 
     def to_screen(self, pos):
-        return [int((pos[0] + 1.3*Distance)*640/self.w), int((pos[1] + 1.3*Distance)*640./self.h)]
+        return [int((pos[0] + 1.3*DISTANCE)*640/self.w), int((pos[1] + 1.3*DISTANCE)*640./self.h)]
 
     def update(self):
-
         for o in self.objects_dict:
             # Comput positions for screen
             obj = self.objects_dict[o]
+
             if obj.name == 'moon':
-                obj.other_pos = self.objects_dict['earth'].pos
+                other = self.objects_dict['earth']
             else:
-                obj.other_pos = self.objects_dict['moon'].pos
+                other = self.objects_dict['moon']
+            obj.other_pos = other.pos
 
             obj.update1(self.objects_dict, self.dt)
             p = self.to_screen(obj.pos)
@@ -163,9 +182,11 @@ class Universe:
     def resume(self):
         self.paused = False
 
-def main():
 
+def main():
     print 'Press q to quit'
+    print 'Press p to pause'
+    print 'Press r to resume'
 
     # Initializing pygame
     pygame.init()
@@ -177,12 +198,10 @@ def main():
     # Create a Universe object, which will hold our heavenly bodies (planets, stars, moons, etc.)
     universe = Universe()
 
-    earth = HeavenlyBody('earth', Earth_Mass, radius=32, imagefile=EARTH_IMAGE)
-    earth.set_pos([0, 0])
-    earth.set_vel([0, 0])
-    moon = HeavenlyBody('moon', Moon_Mass, WHITE, radius=10, imagefile=MOON_IMAGE)
-    moon.set_pos([int(Distance), 0])
-    moon.set_vel([0, 1000])
+    earth = HeavenlyBody('earth', EARTH_MASS, radius=32, imagefile=EARTH_IMAGE)
+    earth.setup(INITIAL_EARTH_POS)
+    moon = HeavenlyBody('moon', MOON_MASS, WHITE, radius=10, imagefile=MOON_IMAGE)
+    moon.setup(INITIAL_MOON_POS, INITIAL_MOON_VELOCITY)
 
     universe.add_body(earth)
     universe.add_body(moon)
