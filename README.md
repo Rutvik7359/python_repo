@@ -12,7 +12,7 @@ Labs                          | Assignments
 [Lab 7](csci_3010u/Lab/Lab7/) |
 [Lab 8](csci_3010u/Lab/Lab8/) |
 [Lab 9](csci_3010u/Lab/Lab9/) |
-[Lab 10](csci_3010u/Lab/Lab10/) |  
+[Lab 10](csci_3010u/Lab/Lab10/)  |  
 
 
 
