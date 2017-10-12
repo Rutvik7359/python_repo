@@ -7,11 +7,10 @@
 - graphs recorded the height and velocities for when the slinky was released to when the top of the slinky
 
 - passed the rest position of the bottom of the slinky:
-                                dfdf             |  dfdfd
+ dfdf                                        |  dfdfd
 ---------------------------------------------|--------------------------------------------
-- 2 mass, 1 spring: | ![Image15](n2_no_damper.png)
- |
-- -  When held: |
+2 mass, 1 spring:                            | ![Image15](n2_no_damper.png)
+When held:                                   |
 o  Bottom of slinky kept moving up and down because energy is conserved |
  |
 - -  When let go: |
