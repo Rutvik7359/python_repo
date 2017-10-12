@@ -36,7 +36,7 @@ o  The weights would keep accelerating and decelerating just like a wave. The bo
 When held:  
 o  The masses throughout the whole slinky kept bouncing through like a wave which resembled a real slinky and even came to rest like the one in the video
 
-![Image20](n100_damper.pn)
+![Image20](n100_damper.png)
 
 When let go:  
 o  From the graph, you can see that the bottom of the slinky is at rest through the whole graph. It did not move until after the top reached the bottom.
