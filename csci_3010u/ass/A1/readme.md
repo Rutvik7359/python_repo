@@ -9,23 +9,23 @@
 - passed the rest position of the bottom of the slinky:
                                              |
 ---------------------------------------------|--------------------------------------------
-- 2 mass, 1 spring:| ![Image15](n2_no_damper.png)
-|
-- -  When held:|
-o  Bottom of slinky kept moving up and down because energy is conserved|
-|
-- -  When let go:|
-o  The bottom of the slinky did start to move slowly and moved faster as the top of the slinky got closer|
-|
-- 2 mass, 1 spring + damper:|
-- -  When held:|
-o  Bottom of slinky moved up and down but slowed down with each movement|
-|
-- -  When let go:|
-o  The bottom of the slinky did not move right away, but when the top got close, it started to move, but would slow down and allow the top to catch up again. This was repeated a few times.|
-|
-![Image15](n2_no_damper.png)|
-![Image16](n2_damper.png)|
+- 2 mass, 1 spring: | ![Image15](n2_no_damper.png)
+ |
+- -  When held: |
+o  Bottom of slinky kept moving up and down because energy is conserved |
+ |
+- -  When let go: |
+o  The bottom of the slinky did start to move slowly and moved faster as the top of the slinky got closer |
+ |
+- 2 mass, 1 spring + damper: |
+- -  When held: |
+o  Bottom of slinky moved up and down but slowed down with each movement |
+ | 
+- -  When let go: |
+o  The bottom of the slinky did not move right away, but when the top got close, it started to move, but would slow down and allow the top to catch up again. This was repeated a few times. |
+
+![Image15](n2_no_damper.png)
+![Image16](n2_damper.png)
 
 10/10/2017- Sheron Balasingam
 
