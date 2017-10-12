@@ -5,7 +5,7 @@
 - passed the rest position of the bottom of the slinky:
 
 ### 2 mass, 1 spring:
-When held: 
+- -  When held: 
 o  Bottom of slinky kept moving up and down because energy is conserved
 
 ![Image15](n2_no_damper.png)
@@ -17,10 +17,11 @@ o  The bottom of the slinky did start to move slowly and moved faster as the top
 - -  When held:
 o  Bottom of slinky moved up and down but slowed down with each movement
 
+![Image16(n2_damper.png)
+
 - -  When let go:
 o  The bottom of the slinky did not move right away, but when the top got close, it started to move, but would slow down and allow the top to catch up again. This was repeated a few times.
 
-![Image16(n2_damper.png)
 
 ### n mass, n-1 spring (where n = 100):
 - -  When held:
