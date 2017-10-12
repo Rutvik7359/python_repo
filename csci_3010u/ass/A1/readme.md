@@ -50,9 +50,9 @@ the top to catch up again. This was
 
 repeated a few times.
 
-![Image15](images/Image15)
+![Image15](n2_no_damper.png)
 
-![Image16](images/Image16)
+![Image16](n2_damper.png)
 
 10/10/2017- Sheron Balasingam
 
@@ -110,7 +110,7 @@ reached the bottom.
 
 - In conclusion, the n mass n-1 spring + damper most closely simulated a slinky.
 
-![Image19](images/Image19)
+![Image19](n100_no_damper.png)
 
-![Image20](images/Image20)
+![Image20](n100_damper.pn)
 
