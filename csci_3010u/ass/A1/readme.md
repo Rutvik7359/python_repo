@@ -17,7 +17,7 @@ o  The bottom of the slinky did start to move slowly and moved faster as the top
 When held:  
 o  Bottom of slinky moved up and down but slowed down with each movement
 
-![Image16(n2_damper.png)
+![Image16](n2_damper.png)
 
 When let go:  
 o  The bottom of the slinky did not move right away, but when the top got close, it started to move, but would slow down and allow the top to catch up again. This was repeated a few times.
