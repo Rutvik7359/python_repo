@@ -1,4 +1,4 @@
-# Python Repo README #
+# Python Repo #
 
 ## (CSCI 3010U) Simulation and Modelling:
 Labs                          | Assignments
