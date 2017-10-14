@@ -88,8 +88,24 @@ def print_as_tree2(A, i, depth):
 
 
 A = [-1, 16,14,10,8,7,3,9,1,4,2,45, 65, 22, 11, 5, -21]
-
-
+print "=============="
+print "Build Max Heap"
+print "=============="
+print "Before:"
+print A
+print_as_tree(A)
 build_max_heap(A)
+print "After:"
+print A
+print_as_tree(A)
 
+print "========"
+print "Heapsort"
+print "========"
+print "Before:"
+print A
+print_as_tree(A)
+heapsort(A)
+print "After:"
+print A
 print_as_tree(A)
