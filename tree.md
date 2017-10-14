@@ -1,7 +1,7 @@
 # Project tree
 
+[csci_3010u](./csci_3010u)
 .
- * [csci_3010u](./csci_3010u)
    * [ass](./csci_3010u/ass)
      * [A1](./csci_3010u/ass/A1)
      * [a1.pdf](./csci_3010u/ass/A1/a1.pdf)
