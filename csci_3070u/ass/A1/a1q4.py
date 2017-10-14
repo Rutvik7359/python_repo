@@ -91,21 +91,33 @@ A = [-1, 16,14,10,8,7,3,9,1,4,2,45, 65, 22, 11, 5, -21]
 print "=============="
 print "Build Max Heap"
 print "=============="
+print "\n"
 print "Before:"
 print A
+print "\n"
 print_as_tree(A)
+
 build_max_heap(A)
+
+print "\n"
 print "After:"
 print A
+print "\n"
 print_as_tree(A)
+print "\n"
 
 print "========"
 print "Heapsort"
 print "========"
+print "\n"
 print "Before:"
 print A
+print "\n"
 print_as_tree(A)
 heapsort(A)
+
+print "\n"
 print "After:"
 print A
+print "\n"
 print_as_tree(A)
