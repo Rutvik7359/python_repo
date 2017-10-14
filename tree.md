@@ -33,3 +33,4 @@
    * [A1](./csci_3070u/ass/A1)
       * [divide_and_conquer.py](./csci_3070u/ass/A1/divide_and_conquer.py)
       * [heap.py](./csci_3070u/ass/A1/heap.py)
+### [README.md](./README.md)
