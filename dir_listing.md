@@ -33,8 +33,3 @@
         - [Lab3_Report.docx](D:\Python/csci_3010u/lab/Lab3/Lab3_Report.docx)
         - [Lab3_Report.pdf](D:\Python/csci_3010u/lab/Lab3/Lab3_Report.pdf)
         - [moon.png](D:\Python/csci_3010u/lab/Lab3/moon.png)
-    - [readme.md](D:\Python/csci_3010u/readme.md)
-  - [list.md](D:\Python/list.md)
-  - [README.md](D:\Python/README.md)
-  - [tree.sh](D:\Python/tree.sh)
-
