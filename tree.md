@@ -1,7 +1,6 @@
-# Project tree
+# Python Repo Tree
 
-[csci_3010u](./csci_3010u)
-.
+### [csci_3010u](./csci_3010u)
    * [ass](./csci_3010u/ass)
      * [A1](./csci_3010u/ass/A1)
      * [a1.pdf](./csci_3010u/ass/A1/a1.pdf)
@@ -29,8 +28,7 @@
       * [moon.png](./csci_3010u/lab/Lab3/moon.png)
       * [lab3-skeleton.py](./csci_3010u/lab/Lab3/lab3-skeleton.py)
    * [readme.md](./csci_3010u/readme.md)
- * [README.md](./README.md)
- * [csci_3070u](./csci_3070u)
+### [csci_3070u](./csci_3070u)
    * [ass](./csci_3070u/ass)
    * [A1](./csci_3070u/ass/A1)
       * [divide_and_conquer.py](./csci_3070u/ass/A1/divide_and_conquer.py)
