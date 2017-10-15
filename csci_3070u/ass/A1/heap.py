@@ -1,11 +1,12 @@
-import numpy as np
-import random
 from sys import platform
+import random
 import os
+import time
 
 # Env variables
 WIN = False
 DASH_SIZE = 40
+
 
 # =============================================================================
 # Heap
@@ -23,8 +24,9 @@ def r_child(i):
     return 2*i + 2
 
 # Fixes a heap with 1 violation
-def max_heapify(A, i):
-    heap_size = len(A)
+def max_heapify(A, i, heap_size=-1):
+    if (heap_size == -1):
+        heap_size = len(A)
     p = parent(i)
     l = l_child(i)
     r = r_child(i)
@@ -43,7 +45,7 @@ def max_heapify(A, i):
 
     if largest != i:
         A[i], A[largest] = A[largest], A[i]
-        max_heapify(A, largest)
+        max_heapify(A, largest, heap_size)
  
  # Builds a max heap from an arbitary array
 def build_max_heap(A):
@@ -57,10 +59,11 @@ def heapsort(A):
     heap_size = len(A)
     for i in range(heap_size-1, 0, -1):
         A[0], A[i] = A[i], A[0]
-        max_heapify(A, 0)
+        heap_size -= 1
+        max_heapify(A, 0, heap_size)
 
 # Returns the top element of a max heap
-def heap_maximum(A):
+def heap_max(A):
     return A[0]
 
 # Removes the top element of a max heap and returns it
@@ -114,6 +117,7 @@ def print_tree(A, i, depth):
             print "\t"*depth + str(A[i])
         print_tree(A, l, depth+1)
 
+
 # =============================================================================
 # Other Functions
 # =============================================================================
@@ -144,8 +148,8 @@ if __name__ == "__main__":
         print " 2: Heap Maximum"
         print " 3: Heap Extract Maximum"
         print " 4: Max Heap Insert"
+        print " 5: Heapsort"
         print "-1: Exit\n"
-
 
         user_input = int(raw_input("Type an integer corresponding to menu items below: "))
         clear_screen()
@@ -156,7 +160,10 @@ if __name__ == "__main__":
                 
         output = ""
         print "="*DASH_SIZE
-        if(user_input == 1):
+
+        # MAX HEAPIFY
+        # Takes a heap with one value at the wrong spot and fixes it
+        if (user_input == 1):
             print "Max Heapify"
             print "="*DASH_SIZE
 
@@ -166,13 +173,22 @@ if __name__ == "__main__":
             max_heapify(B, i)
             output = "Value, " + str(A[i]) + ", heapified to correct spot"
 
+        # HEAPSORT
+        # Takes an arbitrary array and sorts it using a heap
+        elif (user_input == 5):
+            print "Heapsort"
+            print "="*DASH_SIZE
+            heapsort(B)
+
         # Builds max heap (and outputs the top element or extracts it out)
-        else:
+        elif (user_input in [0, 2, 3, 4]):
+            # BUILD MAX HEAP
             build_max_heap(B)
             if (user_input == 0):
                 print "Build Max Heap"
                 print "="*DASH_SIZE
             
+            # HEAP MAXIMUM
             # Gets the the top element in a max heap
             elif (user_input == 2):
                 print "Heap Maximum"
@@ -180,15 +196,18 @@ if __name__ == "__main__":
 
                 print B
                 print_as_tree(B)
-                output = "\n\nThe heap max value is " + str(heap_maximum(B))
+                output = "\n\nThe heap max value is " + str(heap_max(B))
 
+            # HEAP EXTRACT MAXIMUM
             # Removes the top element of a max heap
             elif(user_input == 3):
                 print "Heap Extract Maximum"
                 print "="*DASH_SIZE
 
+                A = B[:]
                 output = "Maximum value, " + str(heap_extract_max(B)) + ", extracted"
             
+            # MAX HEAP INSERT
             # Inserts a value into max heap
             else:
                 clear_screen()
@@ -200,6 +219,12 @@ if __name__ == "__main__":
                 print "="*DASH_SIZE
 
                 max_heap_insert(B, user_input)
+        else: 
+            clear_screen()
+            print "Error: Choose from menu"
+            time.sleep(3)
+            clear_screen()
+            continue
 
         # Prints out before and after of heap
         if user_input != 2:
