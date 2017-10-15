@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 def parent(i):
     return (i-1)//2
@@ -30,7 +31,6 @@ def build_max_heap(A):
     for i in range(heap_size//2, -1, -1):
         max_heapify(A, i, heap_size)
 
-
 def heapsort(A):
     build_max_heap(A)
     heap_size = len(A)
@@ -39,17 +39,16 @@ def heapsort(A):
         heap_size -= 1
         max_heapify(A, 0, heap_size)
 
-
 def heap_maximum(A):
     return A[0]
 
 def heap_extract_max(A, heap_size):
     if (heap_size < 1):
         print "heap underflow"
+    build_max_heap(A)
     max = A[0]
-    A[0] = A[heap_size-1]
-    heap_size -= heap_size
-    max_heapify(A, 0, heap_size)
+    A.pop([0])
+    max_heapify(A, 0, len(A))
 
     return max
 
@@ -65,7 +64,6 @@ def max_heap_insert(A, key, heap_size):
     heap_size += 1
     A.append(999)
     heap_increase_key(A, heap_size-1, key)
-
 
 def print_as_tree(A):
     heap_size = len(A)
@@ -86,38 +84,23 @@ def print_as_tree2(A, i, depth):
             print "\t"*depth + str(A[i])
         print_as_tree2(A, l, depth+1)
 
+if __name__ == "__main__":
 
-A = [-1, 16,14,10,8,7,3,9,1,4,2,45, 65, 22, 11, 5, -21]
-print "=============="
-print "Build Max Heap"
-print "=============="
-print "\n"
-print "Before:"
-print A
-print "\n"
-print_as_tree(A)
+    user_input = 0
+    while user_input != -1:
+        user_input = raw_input("Please enter something: ")
 
-build_max_heap(A)
+        print "=============="
+        if (user_input == 0):
+            print "Build Max Heap"
+        elif(user_input == 1):
+            print "Max Heapify"
+        elif(user_input == 2):
+            print "Heap Maximum"
+        elif(user_input == 3):
+            print "Heap Extract Maximum"
+        elif(user_input == 4):
+            print "Max Heap Insert"
+        print "=============="
 
-print "\n"
-print "After:"
-print A
-print "\n"
-print_as_tree(A)
-print "\n"
-
-print "========"
-print "Heapsort"
-print "========"
-print "\n"
-print "Before:"
-print A
-print "\n"
-print_as_tree(A)
-heapsort(A)
-
-print "\n"
-print "After:"
-print A
-print "\n"
-print_as_tree(A)
+        A = random.sample(range(1, 100), 10)
