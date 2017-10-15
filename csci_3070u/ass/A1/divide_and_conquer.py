@@ -1,13 +1,17 @@
+bigO = ""
 
 def search_word(input_str, search_str):
     input_len = len(input_str)
     search_len = len(search_str)
 
     if (search_str == input_str):
+        bigO = "c"
         return True
     elif (search_len >= input_len or search_len == 0):
+        bigO = "c"
         return False
     else:
+        bigO = "logn"
         return div_search(input_str, search_str, 0, len(input_str))
 
 
@@ -40,10 +44,14 @@ def check(input_str, search_str, i):
     return False
 
 
-search_str = " "
-input_str  = "  d"
-if (search_word(input_str, search_str)):
-    print "search word exists"
-else:
-    print "search word DNE"
+# =============================================================================
+# Main
+# =============================================================================
+if __name__ == "__main__":
+    search_str = "str"
+    input_str  = "str"
+    if (search_word(input_str, search_str)):
+        print "Search word exists with O(" + bigO + ")"
+    else:
+        print "Search word does not exist with O(" + bigO + ")"
 
