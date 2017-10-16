@@ -43,13 +43,13 @@ class Ball:
     def __init__(self):
 
         # You don't need to change y, vy, g, dt, t and mass
-        self.state = [100, 0]
+        self.state = [400, 0]
         self.g = 9.8
         self.dt = 1.0
         self.t = 0
         self.mass = 1
 
-        self.tol_distance = 0.00001
+        self.tol_distance = 0.01
 
         # We plan to use rk4
         self.solver = ode(self.f)
@@ -63,7 +63,30 @@ class Ball:
         return state[0] <= 0
 
     def respond_to_collision(self, state, t):
-        return [0, -1*state[1]], t
+        dt = self.dt
+        s0 = self.state
+        t0 = self.t
+        dt_frac = self.dt
+
+        new_state = state[:]
+
+        while True:
+            # if above
+            if new_state[0] < 0:
+                dt_frac /= 2
+            elif new_state[0] > 0:
+                dt_frac += dt_frac/2
+
+            t = t0 + dt_frac
+            self.solver.set_initial_value(s0, t0)
+            new_state = self.solver.integrate(t)
+
+            if (abs(new_state[0]) <= self.tol_distance):
+                # Make sure above height is above 0
+                if (new_state[0] > 0):
+                    break
+
+        return [0, -1*new_state[1]], t
 
     def update(self):
         new_state = self.solver.integrate(self.t + self.dt)
