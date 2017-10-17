@@ -43,13 +43,13 @@ class Ball:
     def __init__(self):
 
         # You don't need to change y, vy, g, dt, t and mass
-        self.state = [400, 0]
+        self.state = [400, -60]
         self.g = 9.8
         self.dt = 1.0
         self.t = 0
         self.mass = 1
 
-        self.tol_distance = 0.01
+        self.tol_distance = 10
 
         # We plan to use rk4
         self.solver = ode(self.f)
