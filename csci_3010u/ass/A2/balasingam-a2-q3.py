@@ -2,15 +2,9 @@ import pygame, sys
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-from scipy.integrate import ode
 import os
+from scipy.integrate import ode
 
-# set up the colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
 
 WIN_HEIGHT = 500
 WIN_WIDTH = 500
