@@ -1,17 +1,19 @@
-import pygame, sys, random, os, numpy as np, matplotlib.pyplot as plt
+import pygame, sys, random, os
+import numpy as np
 from scipy.integrate import ode
+
 
 # =============================================================================
 # Constants
 # =============================================================================
-WHITE = (255, 255, 255)
+WHITE      = (255, 255, 255)
 WIN_HEIGHT = 500
-WIN_WIDTH = 500
+WIN_WIDTH  = 500
 
-WALLS = ["left", "right", "top", "bottom"]
-NUM_DISKS = 10
+WALLS      = ["left", "right", "top", "bottom"]
+NUM_DISKS  = 10
 MULTIPLIER = 100.
-DT = 0.01
+DT         = 0.01
 
 TITLE    = 'COLLIDING RANDOM DISKS'
 ONE_LINE = '-'*55
@@ -23,7 +25,7 @@ TWO_LINE = ONE_LINE + '\n' + ONE_LINE
 # =============================================================================
 # Env Vars
 # =============================================================================
-paused = False
+paused     = False
 in_windows = False
 # =============================================================================
 # End of Env Vars==============================================================
@@ -256,7 +258,7 @@ def main():
         error = True
         clear_screen()
         usage()
-        
+
     if error:
         sys.exit(0)
 
@@ -265,7 +267,6 @@ def main():
 
     clock = pygame.time.Clock()
 
-    # top left corner is (0,0)
     win_width = WIN_WIDTH
     win_height = WIN_HEIGHT
     screen = pygame.display.set_mode((win_width, win_height))

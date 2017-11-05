@@ -1,18 +1,19 @@
 import random, sys, os, numpy as np
+import matplotlib.pyplot as plt
+
 
 # =============================================================================
 # Constants
 # =============================================================================
-HEIGHT = 100
+# default height and number of runs
+HEIGHT   = 100
 NUM_RUNS = 1000
-P_LEFT_OFFSET = 0
 
-# leaf motion probabilities
-P_UP = 0.1
-P_DOWN = 0.55
-P_LEFT = 0.15
+# leaf motion default probabilities
+P_UP    = 0.1
+P_DOWN  = 0.55
+P_LEFT  = 0.15
 P_RIGHT = 0.15
-
 
 TITLE    = 'LEAF IN THE WIND'
 ONE_LINE = '-'*55
@@ -20,8 +21,13 @@ TWO_LINE = ONE_LINE + '\n' + ONE_LINE
 # =============================================================================
 # End of Constants=============================================================================
 
-in_windows = False
 
+# =============================================================================
+# Environment Variables
+# =============================================================================
+in_windows = False
+# =============================================================================
+# End of Env Vars==============================================================
 
 
 # =============================================================================
@@ -84,15 +90,17 @@ def usage():
     print TWO_LINE
     print 'Usage:'
     print ONE_LINE
-    print 'python *q4* <height(optional)>'
-    print '            <#_of_runs(optional)>'
+    print 'python *q4* <#_of_runs(optional)>'
+    print '            <height(optional)>'
     print '            <left_probability_in[0, 0.3](optional)>'
     print TWO_LINE
 # =============================================================================
 # End of Helper Functions======================================================
 
 
-
+# =============================================================================
+# Main Function
+# =============================================================================
 def main():
     # clear screen and print usage
     if sys.platform == "win32":
@@ -115,23 +123,23 @@ def main():
         clear_screen()
         usage()
     else:
-        # height input
-        if num_args >= 1:
-            h = int(sys.argv[1])
-
-            if h <= 0:
-                error = True
-                clear_screen()
-                print "Error: Height must be greater than 0"
-
         # number of runs input
-        if num_args >= 2:
-            n = int(sys.argv[2])
+        if num_args >= 1:
+            n = int(sys.argv[1])
 
             if n <= 0:
                 error = True
                 clear_screen()
                 print "Error: Number of runs must be greater than 0"
+
+        # height input
+        if num_args >= 2:
+            h = int(sys.argv[2])
+
+            if h <= 0:
+                error = True
+                clear_screen()
+                print "Error: Height must be greater than 0"
 
         # left movement probability input
         if num_args == 3:
@@ -157,16 +165,32 @@ def main():
     print "\nRange End:"
     print order + ": " + str(ranges)
 
-    time = []
-    disp = []
+    for i in range(0, 2):
+        time = []
+        disp = []
 
-    for i in range(0, n):
-        t, x = simulate_leaf_fall(h, ranges)
-        time.append(t)
-        disp.append(x)
-    print "\n\nDisplacement:\tmean: " + str(np.mean(disp)) + "\tvariance: " + str(np.var(disp))
-    print "Time:\t\tmean: " + str(np.mean(time)) + "\tvariance: " + str(np.var(time))
+        for i in range(0, n):
+            t, x = simulate_leaf_fall(h, ranges)
+            time.append(t)
+            disp.append(x)
+        print "\n\nDisplacement:\tmean: " + str(np.mean(disp)) + "\tvariance: " + str(np.var(disp))
+        print "Time:\t\tmean: " + str(np.mean(time)) + "\tvariance: " + str(np.var(time))
 
+    plt.figure(1)
+    plt.hist(time)
+    plt.xlabel('Time')
+    plt.ylabel('Count')
+    plt.title('Histogram of Time Leaf Takes to Reach Ground')
+
+
+    plt.figure(2)
+    plt.hist(disp)
+    plt.xlabel('Displacement')
+    plt.ylabel('Count')
+    plt.title('Histogram of Displacement of Leaf When it Reaches the Ground')
+    plt.show()
+# =============================================================================
+# End of Main Function=========================================================
 
 if __name__ == '__main__':
     main()
