@@ -165,23 +165,24 @@ def main():
     print "\nRange End:"
     print order + ": " + str(ranges)
 
-    for i in range(0, 2):
-        time = []
-        disp = []
+    time = []
+    disp = []
 
-        for i in range(0, n):
-            t, x = simulate_leaf_fall(h, ranges)
-            time.append(t)
-            disp.append(x)
-        print "\n\nDisplacement:\tmean: " + str(np.mean(disp)) + "\tvariance: " + str(np.var(disp))
-        print "Time:\t\tmean: " + str(np.mean(time)) + "\tvariance: " + str(np.var(time))
+    # run simulation n times
+    for i in range(0, n):
+        t, x = simulate_leaf_fall(h, ranges)
+        time.append(t)
+        disp.append(x)
 
+    print "Time:\t\tmean: " + str(np.mean(time)) + "\tvariance: " + str(np.var(time))
+    print "\n\nDisplacement:\tmean: " + str(np.mean(disp)) + "\tvariance: " + str(np.var(disp))
+
+    # plot histograms for time and displacement
     plt.figure(1)
     plt.hist(time)
     plt.xlabel('Time')
     plt.ylabel('Count')
     plt.title('Histogram of Time Leaf Takes to Reach Ground')
-
 
     plt.figure(2)
     plt.hist(disp)
