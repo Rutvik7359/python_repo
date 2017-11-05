@@ -238,6 +238,7 @@ def usage():
 # =============================================================================
 def main():
     # clear terminal and print usage
+    global in_windows
     if sys.platform == "win32":
         in_windows = True
     clear_screen()
