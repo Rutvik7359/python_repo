@@ -35,7 +35,6 @@ in_windows = False
 # Disk2D Class
 # =============================================================================
 class Disk2D(pygame.sprite.Sprite):
-    
     def __init__(self, imgfile, radius, mass=1.0):
         pygame.sprite.Sprite.__init__(self)
 
@@ -79,7 +78,6 @@ class Disk2D(pygame.sprite.Sprite):
 # World Class
 # =============================================================================
 class World:
-
     def __init__(self):
         self.paused = paused
         self.disks = []
