@@ -1,6 +1,6 @@
 import random, sys, os, numpy as np
 import matplotlib.pyplot as plt
-
+from scipy.stats import chisquare
 
 # =============================================================================
 # Constants
@@ -30,11 +30,12 @@ def sample_numbers(n, ranges):
     time = 0
 
     num_list = []
+    rand_list = []
     for i in range(0, n):
-        # assuming every change in position takes 1 second
-        time += 1
 
+        random.seed(random.random())
         range_choice = random.uniform(0, 1)
+        rand_list.append(range_choice)
 
         num = 1
         if range_choice > ranges[9]:
@@ -56,8 +57,10 @@ def sample_numbers(n, ranges):
         elif range_choice > ranges[1]:
             num = 2
 
+
+
         num_list.append(num)
-    return num_list
+    return num_list, rand_list
 
 # =============================================================================
 # End of Sample Number Function================================================
@@ -66,18 +69,6 @@ def sample_numbers(n, ranges):
 # =============================================================================
 # Helper Functions
 # =============================================================================
-
-def get_prob_range(p):
-    # setup probability ranges from 0 to 1 in ranges list in the order
-    # top, bottom, left right
-    ranges = []
-    r = 0
-    for i in range(0, len(p)):
-        r += p[i]
-        ranges.append(round(r, 5))
-
-    return ranges
-
 # Clears terminal screen
 def clear_screen():
     if in_windows:
@@ -118,8 +109,8 @@ def main():
     if error:
         sys.exit(0)
 
-    ranges = get_prob_range(PROBS)
-
+    # get ranges from probabilites
+    ranges = np.cumsum(PROBS)
     order = list(range(1,11))
 
     print "Probabilities:"
@@ -127,9 +118,17 @@ def main():
     print "\nRange End:"
     print str(order) + ":\n" + str(ranges)
 
-    num_list = sample_numbers(n, ranges)
+    num_list, rand_list = sample_numbers(n, ranges)
 
-    plt.hist(num_list, 10, normed=True)
+    x = 0
+    for i in range(0, len(PROBS)):
+         x += ((num_list.count(i+1) - PROBS[i]*n)**2)/(PROBS[i]*n)
+
+    print x
+
+
+    #plt.hist(num_list, bins='auto', normed=True)
+    plt.hist(rand_list, bins=[0, 0.12, 0.25, 0.45, 0.55, 0.61, 0.65, 0.7, 0.79, 0.99, 1.])
     plt.show()
 # =============================================================================
 # End of Main Function=========================================================
