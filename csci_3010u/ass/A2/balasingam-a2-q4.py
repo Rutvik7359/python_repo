@@ -180,13 +180,13 @@ def main():
 
     # plot histograms for time and displacement
     plt.figure(1)
-    plt.hist(time)
+    plt.hist(time, normed=True)
     plt.xlabel('Time')
     plt.ylabel('Count')
     plt.title('Histogram of Time Leaf Takes to Reach Ground')
 
     plt.figure(2)
-    plt.hist(disp)
+    plt.hist(disp, normed=True)
     plt.xlabel('Displacement')
     plt.ylabel('Count')
     plt.title('Histogram of Displacement of Leaf When it Reaches the Ground')
