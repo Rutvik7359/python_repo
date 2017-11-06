@@ -35,7 +35,6 @@ in_windows = False
 # Disk2D Class
 # =============================================================================
 class Disk2D(pygame.sprite.Sprite):
-    
     def __init__(self, imgfile, radius, mass=1.0):
         pygame.sprite.Sprite.__init__(self)
 
@@ -67,17 +66,10 @@ class Disk2D(pygame.sprite.Sprite):
         self.t += dt
         self.state = self.solver.integrate(self.t)
 
-    def move_by(self, delta):
-        self.state[0:2] = np.add(self.pos, delta)
-        return self
-
     def draw(self, surface):
         rect = self.image.get_rect()
         rect.center = (self.state[0], WIN_HEIGHT-self.state[1])
         surface.blit(self.image, rect)
-
-    def pprint(self):
-        print 'Disk', self.state
 # =============================================================================
 # End of Disk2D Class==========================================================
 
@@ -86,7 +78,6 @@ class Disk2D(pygame.sprite.Sprite):
 # World Class
 # =============================================================================
 class World:
-
     def __init__(self):
         self.paused = paused
         self.disks = []
@@ -97,11 +88,6 @@ class World:
         disk = Disk2D(imgfile, radius, mass)
         self.disks.append(disk)
         return disk
-
-    def pprint(self):
-        print '#disks', len(self.disks)
-        for d in self.disks:
-            d.pprint()
 
     def draw(self, screen):
         for d in self.disks:
