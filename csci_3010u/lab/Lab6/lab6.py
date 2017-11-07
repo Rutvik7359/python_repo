@@ -6,10 +6,10 @@ from scipy.stats import chisquare
 # Constants
 # =============================================================================
 # default number of runs
-NUM_RUNS = 10000
+NUM_RUNS = 100000
 
 # Number probabilities for 1, 2, 3...10
-PROBS = [12./100, 13./100, 20./100, 10./100, 6./100, 4./100, 5./100, 9./100, 20./100, 1./100]
+PROBS = [12./100., 13./100., 20./100., 10./100., 6./100., 4./100., 5./100., 9./100., 20./100., 1./100.]
 # =============================================================================
 # End of Constants=============================================================================
 
@@ -26,40 +26,24 @@ in_windows = False
 # Sample Number Function
 # =============================================================================
 def sample_numbers(n, ranges):
-    x = 0
-    time = 0
-
     num_list = []
     rand_list = []
-    for i in range(0, n):
 
-        random.seed(random.random())
+    random.seed(random.random())
+    for i in range(0, n):
         range_choice = random.uniform(0, 1)
         rand_list.append(range_choice)
 
-        num = 1
-        if range_choice > ranges[9]:
-            num = 10
-        elif range_choice > ranges[8]:
-            num = 9
-        elif range_choice > ranges[7]:
-            num = 8
-        elif range_choice > ranges[6]:
-            num = 7
-        elif range_choice > ranges[5]:
-            num = 6
-        elif range_choice > ranges[4]:
-            num = 5
-        elif range_choice > ranges[3]:
-            num = 4
-        elif range_choice > ranges[2]:
-            num = 3
-        elif range_choice > ranges[1]:
-            num = 2
-
-
+        num = 10
+        # Goes through each cumulutive probability except the last one which is
+        # set as the default in the line above
+        for j in range(0, len(ranges)-1):
+            if range_choice < ranges[j]:
+                num = j+1
+                break
 
         num_list.append(num)
+
     return num_list, rand_list
 
 # =============================================================================
@@ -115,19 +99,18 @@ def main():
 
     print "Probabilities:"
     print str(order) + ":\n" + str(PROBS)
-    print "\nRange End:"
+    print "\nCummulative Probability Range:"
     print str(order) + ":\n" + str(ranges)
 
     num_list, rand_list = sample_numbers(n, ranges)
-
     x = 0
     for i in range(0, len(PROBS)):
-         x += ((num_list.count(i+1) - PROBS[i]*n)**2)/(PROBS[i]*n)
+        ei = PROBS[i]*n
+        print num_list.count(i+1) 
+        x += ((num_list.count(i+1) - ei)**2)/ei
 
     print x
 
-
-    #plt.hist(num_list, bins='auto', normed=True)
     plt.hist(rand_list, bins=[0, 0.12, 0.25, 0.45, 0.55, 0.61, 0.65, 0.7, 0.79, 0.99, 1.])
     plt.show()
 # =============================================================================
