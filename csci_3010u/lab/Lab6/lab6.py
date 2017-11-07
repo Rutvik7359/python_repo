@@ -7,7 +7,7 @@ from scipy.stats import chisquare
 # =============================================================================
 # default number of runs
 NUM_RUNS = 100000
-
+X2_CHI = 16.92
 # Number probabilities for 1, 2, 3...10
 PROBS = [12./100., 13./100., 20./100., 10./100., 6./100., 4./100., 5./100., 9./100., 20./100., 1./100.]
 # =============================================================================
@@ -97,19 +97,31 @@ def main():
     ranges = np.cumsum(PROBS)
     order = list(range(1,11))
 
+    # printing out probabilites and probability range
     print "Probabilities:"
     print str(order) + ":\n" + str(PROBS)
     print "\nCummulative Probability Range:"
     print str(order) + ":\n" + str(ranges)
 
+    # getting the sample numbers
     num_list, rand_list = sample_numbers(n, ranges)
+
+    # Calculating chi-square value and comparing to x^2(0.05) at 9 degrees of
+    # freedom
     x = 0
     for i in range(0, len(PROBS)):
         ei = PROBS[i]*n
-        print num_list.count(i+1) 
         x += ((num_list.count(i+1) - ei)**2)/ei
 
-    print x
+
+    print "\nThe chi-square value is ", x
+    if x < X2_CHI:
+        print "Since ", round(x, 3), " < ", X2_CHI, ", we ACCEPT the null "
+        print "hypothesis because there is no statistically significant "
+        print "difference between the observed and the expected frequencies."
+    else:
+        print "Since ", round(x, 3), " > ", X2_CHI, ", we REJECT the null "
+        print "hypothesis."
 
     plt.hist(rand_list, bins=[0, 0.12, 0.25, 0.45, 0.55, 0.61, 0.65, 0.7, 0.79, 0.99, 1.])
     plt.show()
