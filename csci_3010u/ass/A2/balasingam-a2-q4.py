@@ -14,6 +14,13 @@ P_UP    = 0.1
 P_DOWN  = 0.55
 P_LEFT  = 0.15
 P_RIGHT = 0.15
+P_NULL  = 0.05
+
+MOTION = [[1, 0], [-1, 0], [0, -1], [0, 1], [0, 0]]
+P_NAMES = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'NOTHING']
+
+# chi-square value to check (4 degrees of freedom at 95% confidence)
+X2_CHI = 9.488
 
 TITLE    = 'LEAF IN THE WIND'
 ONE_LINE = '-'*55
@@ -33,31 +40,29 @@ in_windows = False
 # =============================================================================
 # Leaf Fall Function
 # =============================================================================
-def simulate_leaf_fall(h, ranges):
+def simulate_leaf_fall(h, ranges, probs):
     x = 0
     time = 0
+    changes = []
+    choices = []
 
+    random.seed(random.random())
     while h > 0:
         # assuming every change in position takes 1 second
         time += 1
 
         change = random.uniform(0, 1)
+        changes.append(change)
 
-        # P(0.1) of moving up
-        if change <= ranges[0]:
-            h += 1
-        # P(0.55) of moving down
-        elif change > ranges[0] and change <= ranges[1]:
-            h -= 1
-        # P(0.15 + P_LEFT_OFFSET) of moving left
-        elif change > ranges[1] and change <= ranges[2]:
-            x -= 1
-        # P(0.15 - P_LEFT_OFFSET) of moving right
-        elif change > ranges[2] and change <= ranges[3]:
-            x += 1
-        # P(0.05) of staying in the same spot
+        # Goes through each cumulutive probability
+        for j in range(0, len(ranges)):
+            if change <= ranges[j]:
+                choices.append(P_NAMES[j])
+                h += MOTION[j][0]
+                x += MOTION[j][1]
+                break
 
-    return time, x
+    return time, x, changes, choices
 # =============================================================================
 # End of Leaf Fall Function====================================================
 
@@ -65,18 +70,6 @@ def simulate_leaf_fall(h, ranges):
 # =============================================================================
 # Helper Functions
 # =============================================================================
-
-def get_prob_range(p):
-    # setup probability ranges from 0 to 1 in ranges list in the order
-    # top, bottom, left right
-    ranges = []
-    r = 0
-    for i in range(0, len(p)):
-        r += p[i]
-        ranges.append(round(r, 2))
-
-    return ranges
-
 # Clears terminal screen
 def clear_screen():
     if in_windows:
@@ -157,39 +150,68 @@ def main():
             sys.exit(0)
 
 
-    probs = [P_UP, P_DOWN, p_left, p_right]
-    ranges = get_prob_range(probs)
+    probs = [P_UP, P_DOWN, p_left, p_right, P_NULL]
+    ranges = [round(p, 2) for p in np.cumsum(probs)]
 
-    order = "[top, down, left, right]"
-    print "Probabilities:"
-    print order + ": " + str(probs)
-    print "\nRange End:"
-    print order + ": " + str(ranges)
+
+    print "\nNumber of runs:\t" + str(n)
+    print "\nHeight:\t\t" + str(h)
+    print "\nProbabilities:"
+    print P_NAMES, ": " + str(probs)
+    print "Cumulative Probability Range:"
+    print P_NAMES, ": " + str(ranges)
 
     time = []
     disp = []
-
+    changes = [] # stores probabilities generated in simulate_leaf_fall from all runs
+    choices = [] # stores movement choices made depending on the random number generator
     # run simulation n times
     for i in range(0, n):
-        t, x = simulate_leaf_fall(h, ranges)
+        t, x, change, choice= simulate_leaf_fall(h, ranges, probs)
         time.append(t)
         disp.append(x)
+        for j in range(0, h):
+            changes.append(change[j])
+            choices.append(choice[j])
 
-    print "Time:\t\tmean: " + str(np.mean(time)) + "\tvariance: " + str(np.var(time))
-    print "\n\nDisplacement:\tmean: " + str(np.mean(disp)) + "\tvariance: " + str(np.var(disp))
+    print "\nTime:\t\tmean: " + str(np.mean(time)) + "\tvariance: " + str(np.var(time))
+    print "\nDisplacement:\tmean: " + str(np.mean(disp)) + "\tvariance: " + str(np.var(disp))
+
+    # calculate chi-sqaure value for the movement choices made
+    # includes all choices made through in height*number of runs
+    x2 = 0
+    for i in range(0, len(probs)):
+        ei = probs[i]*n*h
+        x2 += ((choices.count(P_NAMES[i]) - ei)**2)/ei
+
+    print "\nThe chi-square value is ", x2
+    if x2 < X2_CHI:
+        print "Since ", round(x2, 3), " < ", X2_CHI, ", we ACCEPT the null hypothesis"
+        print "because there is no statistically significant difference"
+        print "between the observed and the expected frequencies."
+    else:
+        print "Since ", round(x2, 3), " > ", X2_CHI, ", we REJECT the null "
+        print "hypothesis."
 
     # plot histograms for time and displacement
     plt.figure(1)
-    plt.hist(time, normed=True)
+    plt.hist(time)
     plt.xlabel('Time')
     plt.ylabel('Count')
     plt.title('Histogram of Time Leaf Takes to Reach Ground')
 
     plt.figure(2)
-    plt.hist(disp, normed=True)
+    plt.hist(disp)
     plt.xlabel('Displacement')
     plt.ylabel('Count')
     plt.title('Histogram of Displacement of Leaf When it Reaches the Ground')
+
+    plt.figure(3)
+    plt.hist(changes, bins=[0] + ranges)
+    plt.xlabel('Cumulative Probabilities')
+    plt.ylabel('Count')
+    plt.title('Histogram of the Frequency of Movement Choices Made\n(Chi-Square value=' + str(x2) + ')')
+
     plt.show()
 # =============================================================================
 # End of Main Function=========================================================
