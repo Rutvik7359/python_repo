@@ -6,7 +6,7 @@ from scipy.stats import chisquare
 # Constants
 # =============================================================================
 # default number of runs
-NUM_RUNS = 100000
+NUM_RUNS = 10000
 X2_CHI = 16.92
 # Number probabilities for 1, 2, 3...10
 PROBS = [12./100., 13./100., 20./100., 10./100., 6./100., 4./100., 5./100., 9./100., 20./100., 1./100.]
@@ -94,8 +94,8 @@ def main():
     if error:
         sys.exit(0)
 
-    # get ranges from probabilites
-    ranges = np.cumsum(PROBS)
+    # get get cumulative probability range from probabilites
+    ranges = [round(p, 2) for p in np.cumsum(PROBS)]
     order = list(range(1,11))
 
     # printing out probabilites and probability range
@@ -124,7 +124,9 @@ def main():
         print "Since ", round(x, 3), " > ", X2_CHI, ", we REJECT the null "
         print "hypothesis."
 
-    plt.hist(rand_list, bins=[0, 0.12, 0.25, 0.45, 0.55, 0.61, 0.65, 0.7, 0.79, 0.99, 1.])
+    plt.hist(rand_list, bins=[0] + ranges)
+    plt.xlabel('Cumulative Probabilities per Number')
+    plt.ylabel('Count')
     plt.show()
 # =============================================================================
 # End of Main Function=========================================================
