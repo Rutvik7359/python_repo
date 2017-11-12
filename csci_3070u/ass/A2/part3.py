@@ -5,7 +5,7 @@ import numpy as np, operator
 # =============================================================================
 # Constants
 # =============================================================================
-WEIGHT_CAP = 100.0 #lbs
+WEIGHT_CAP = 75.0 #lbs
 NUM_ITEMS = 10
 
 
@@ -17,23 +17,28 @@ class Item():
         self.fraction = 0.0
 
     def set_fraction(self, fraction):
-        self.fraction = round(fraction, 2)
+        self.fraction = fraction
 
 
 def get_knapsack(weight, items):
-    items = sorted(items, key=operator.attrgetter('ratio'))
+    items = sorted(items, reverse=True, key=operator.attrgetter('ratio'))
     remain_weight = weight
+    total_value = 0
 
     knapsack = []
-    for i in range(0, len(items)):
-        if (items[i].weight <= remain_weight):
-            knapsack.append(items[i])
-            items[i].set_fraction(1.0)
-            remain_weight -= items[i].weight
+    for item in items:
+        if (item.weight <= remain_weight):
+            knapsack.append(item)
+            item.set_fraction(1.0)
+            remain_weight -= item.weight
+            total_value += item.value
         else:
-            items[i].set_fraction(remain_weight/items[i].weight)
+            frac = remain_weight/item.weight
+            item.set_fraction(frac)
+            total_value += item.value*frac
             break
 
+    return items, total_value
 
 # =============================================================================
 # Main
@@ -49,12 +54,14 @@ if __name__ == "__main__":
 
         items.append(Item(weight, value))
 
-    get_knapsack(WEIGHT_CAP, items)
+    items, opt_value = get_knapsack(WEIGHT_CAP, items)
 
     total_weight = 0
     i = 0
-    print "item #\tweight\tvalue\tfraction in knapsack"
+    print "item #\tweight\tvalue\tratio\tfraction in knapsack"
     for item in items:
-        total_weight = item.weight*item.fraction
+        total_weight += item.weight*item.fraction
         i += 1
-        print str(i) + "\t" + str(item.weight) + "\t" + str(item.value) + "\t\t" + str(item.fraction)
+        print str(i) + "\t" + str(item.weight) + "\t" + str(item.value) + "\t" + str(round(item.ratio, 2)) + "\t\t" + str(round(item.fraction, 2))
+
+    print "\nThe optimum value is " + str(opt_value)
