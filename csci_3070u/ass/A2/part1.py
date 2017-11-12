@@ -1,8 +1,5 @@
-from sys import platform
+from util import *
 import numpy as np, os
-
-# Env variables
-WIN = False
 
 
 # =============================================================================
@@ -15,10 +12,6 @@ def sub_value(char_1, char_2):
         sub = 0
 
     return sub
-
-
-def minimum(val_1, val_2, val_3):
-    return min(min(val_1, val_2), val_3)
 
 
 def backtrace_align_str(ptr, str_1, str_2):
@@ -49,6 +42,7 @@ def backtrace_align_str(ptr, str_1, str_2):
 
     print str1
     print str2
+
 
 def levenshtein(str_1, str_2):
     m = len(str_1) + 1
@@ -85,31 +79,22 @@ def levenshtein(str_1, str_2):
     backtrace_align_str(ptr, str_1, str_2)
 
 
-# =============================================================================
-# Other Functions
-# =============================================================================
-def clear_screen():
-    if WIN:
-        os.system('cls')
-    else:
-        os.system('clear')
-
 
 # =============================================================================
 # Main
 # =============================================================================
 if __name__ == "__main__":
-
-    if platform == "win32":
-        WIN = True
     clear_screen()
 
     print 'intention/execution:'
     levenshtein('intention', 'execution')
+
     print '\nspoof/stool:'
     levenshtein('spoof', 'stool')
+
     print '\npodiatrist/pediatrician:'
     levenshtein('podiatrist', 'pediatrician')
+    
     print '\nblaming/conning:'
     levenshtein('blaming', 'conning')
 
