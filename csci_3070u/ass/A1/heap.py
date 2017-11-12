@@ -231,4 +231,4 @@ if __name__ == "__main__":
             print_all(A, B)
 
         if output != "":
-            print output + "\n" 
+            print output + "\n"
