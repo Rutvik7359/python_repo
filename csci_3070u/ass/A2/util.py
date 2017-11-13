@@ -1,13 +1,13 @@
-from sys import platform
-import os
-
+from numpy import random
+from collections import Counter
+import numpy as np, operator as op, sys, os.path, os
 
 
 # =============================================================================
 # Helper Functions
 # =============================================================================
 def clear_screen():
-    if platform == "win32":
+    if sys.platform == "win32":
         os.system('cls')
     else:
         os.system('clear')
