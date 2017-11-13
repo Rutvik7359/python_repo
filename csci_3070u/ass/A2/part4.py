@@ -55,7 +55,8 @@ def huffman(countDict):
     print "HUFFMAN TREE"
     print "="*70
     print_tree(arr, 0, 0)
-    print_table(arr)
+
+    return arr, print_table(arr)
 
 
 # =============================================================================
@@ -72,10 +73,7 @@ def print_table(arr):
             length += node.value*len(node.code)
             print " "*4 + str(node.key) + "\t\t" + str(node.value) + "\t" + node.code
 
-    print "\nThe length before using prefix codes is " + str(arr[0].value)
-    print "\nThe length after using prefix codes is " + str(length)
-    print ""
-    
+    return float(length)/8.
 
 # prints a binary tree with prefix codes for each character
 def print_tree(arr, i, depth, code=""):
@@ -162,4 +160,7 @@ if __name__ == "__main__":
 
 
     countDict = get_char_freq(file)
-    huffman(countDict)
+    nodes, doc_size = huffman(countDict)
+
+    print "\nThe length of the document before using prefix codes is " + str(nodes[0].value) + " bytes"
+    print "\nThe length of the document after using prefix codes is " + str(doc_size) + " bytes"
