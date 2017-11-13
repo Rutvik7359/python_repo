@@ -56,19 +56,26 @@ def huffman(countDict):
     print "="*70
     print_tree(arr, 0, 0)
     print_table(arr)
-    print ""
 
 
 # =============================================================================
 # Helper Functions
 # =============================================================================
 def print_table(arr):
+    length = 0
+
     print "\nHUFFMAN TABLE"
     print "="*35
     print "Character\tValue\tCode"
     for node in arr:
         if node.key != None:
+            length += node.value*len(node.code)
             print " "*4 + str(node.key) + "\t\t" + str(node.value) + "\t" + node.code
+
+    print "\nThe length before using prefix codes is " + str(arr[0].value)
+    print "\nThe length after using prefix codes is " + str(length)
+    print ""
+    
 
 # prints a binary tree with prefix codes for each character
 def print_tree(arr, i, depth, code=""):
