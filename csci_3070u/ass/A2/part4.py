@@ -62,6 +62,8 @@ def huffman(countDict):
 # =============================================================================
 # Helper Functions
 # =============================================================================
+# prints table with prefix codes for each character and returns the new size of
+# the document
 def print_table(arr):
     length = 0
 
@@ -157,7 +159,6 @@ if __name__ == "__main__":
 
     if error:
         sys.exit(0)
-
 
     countDict = get_char_freq(file)
     nodes, doc_size = huffman(countDict)
