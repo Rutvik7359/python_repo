@@ -32,6 +32,8 @@ class Node():
 # Huffman Function
 # =============================================================================
 def huffman(countDict):
+    print_title("HUFFMAN TREE", False, '-')
+
     keyList = list(set(countDict.elements()))
     valList = sorted([countDict[k] for k in keyList])
     nodes = []
@@ -52,8 +54,6 @@ def huffman(countDict):
     node = nodes.pop()
     arr = []
     tree_to_array(node, arr, 0)
-    print "HUFFMAN TREE"
-    print "="*70
     print_tree(arr, 0, 0)
 
     return arr, print_table(arr)
@@ -65,10 +65,10 @@ def huffman(countDict):
 # prints table with prefix codes for each character and returns the new size of
 # the document
 def print_table(arr):
-    length = 0
+    print ""
+    print_title("HUFFMAN TABLE", False, '-')
 
-    print "\nHUFFMAN TABLE"
-    print "="*35
+    length = 0
     print "Character\tValue\tCode"
     for node in arr:
         if node.key != None:
@@ -141,15 +141,14 @@ def get_char_freq(file):
 # Main
 # =============================================================================
 if __name__ == "__main__":
-    clear_screen()
-
-    num_args = len(sys.argv) - 1
-    error = False
+    print_title("HUFFMAN CODING")
+    
     file = FILE
-    if num_args > 1:
-        print "Usage: python part4.py <text_file>(optional)"
-        error = True
-    else:
+
+    usage = "Usage: python part4.py <text_file>(optional)"
+    num_args, error = check_args(1, usage)
+
+    if num_args <= 1:
         if num_args == 1:
             file = str(sys.argv[1])
 
@@ -164,4 +163,4 @@ if __name__ == "__main__":
     nodes, doc_size = huffman(countDict)
 
     print "\nThe length of the document before using prefix codes is " + str(nodes[0].value) + " bytes"
-    print "\nThe length of the document after using prefix codes is " + str(doc_size) + " bytes"
+    print "\nThe length of the document after using prefix codes is " + str(doc_size) + " bytes\n"

@@ -5,7 +5,7 @@ from util import *
 # Constants
 # =============================================================================
 RAND_MAX = 1000000
-NUM_DIGITS = 10
+NUM_VALUES = 10
 
 
 # =============================================================================
@@ -28,7 +28,7 @@ def get_rand_arr(n, rand_max):
     return randArray
 
 
-# Performs counting sort on arr by using its provided digitArray
+# Performs counting sort on the array by using its provided single digit array
 def count_sort(digitArray, arr):
     digitList = list(digitArray)
     uniqueList = list(set(digitArray))
@@ -57,6 +57,7 @@ def radix_sort(arr):
     digitArrayMax = -1
 
     i = 1
+    # get array of digits at index i
     digitArray = get_digit_arr(arr, i)
     while digitArrayMax != 0:
         arr = count_sort(digitArray, arr[:])
@@ -71,17 +72,30 @@ def radix_sort(arr):
 # Main
 # =============================================================================
 if __name__ == "__main__":
-    clear_screen()
+    print_title("Radix Sort")
 
-    n = NUM_DIGITS
+    num_values = NUM_VALUES
 
-    arr = get_rand_arr(n, RAND_MAX)
+    usage = "Usage: python part2.py <num_values>(optional)"
+    num_args, error = check_args(1, usage)
+
+    if num_args == 1:
+        num_values = int(sys.argv[1])
+        if num_values < 1:
+            print "Error: Number of values must be > 0"
+            error = True
+
+    if error:
+        sys.exit(0)
+
+    arr = get_rand_arr(num_values, RAND_MAX)
     print "Array before radix_sort:"
     print arr
 
     arr = radix_sort(arr)
-    print "Array after radix_sort:"
+    print "\nArray after radix_sort:"
     print arr
+    print ""
 
 
 
