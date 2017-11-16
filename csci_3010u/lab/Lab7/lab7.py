@@ -147,7 +147,6 @@ if __name__ == "__main__":
             ax = plt.subplot(111)
             plot_state(state, ax, 'Initial state')
 
-        sys.exit(0)
         for i in range(NUM_EQUIL): # Run for some steps to achieve equilibrium
             state = mcstep(state, 1./T[m]) # before collecting statistics
         
