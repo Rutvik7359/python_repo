@@ -1,6 +1,6 @@
 from numpy import random
 from math import exp
-import numpy as np, matplotlib.pyplot as plt, sys, os
+import numpy as np, matplotlib.pyplot as plt, sys
 
 
 # =============================================================================
@@ -8,6 +8,7 @@ import numpy as np, matplotlib.pyplot as plt, sys, os
 # =============================================================================
 LAT_DIMEN = 10
 NUM_STEPS = 100
+NUM_EQUIL = 1000
 T         = np.linspace(1.2,3.8,256)
 
 
@@ -29,6 +30,22 @@ def plot_state(state, ax, title_str):
     plt.yticks([])
     ax.pcolormesh(X, Y, state, cmap=plt.cm.bwr)
     plt.title(title_str)
+
+
+def set_boundary(i, j, N):
+    _s = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+    # boundary condition check and adjust
+    if i == 0:
+        _s[1][0] = N - 1
+    elif i == (N-1):
+        _s[0][0] = -(N-1)
+
+    if j == 0:
+        _s[3][1] = N - 1
+    elif j == (N-1):
+        _s[2][1] = -(N-1)
+
+    return _s
     
 def compute_energy(state):
     N = len(state)
@@ -36,18 +53,8 @@ def compute_energy(state):
     E = 0
     for i in range(N):
         for j in range(N):
-            _s = [[1, 0], [-1, 0], [0, 1], [0, -1]]
-            # boundary condition check
-            if i == 0:
-                _s[1][0] = N - 1
-            elif i == (N-1):
-                _s[0][0] = -(N-1)
 
-            if j == 0:
-                _s[3][1] = N - 1
-            elif j == (N-1):
-                _s[2][1] = -(N-1)
-
+            _s = set_boundary(i, j, N)
             s_neigh = 0
             for k in range(0, len(_s)):
                 _i = i + _s[k][0]
@@ -59,6 +66,7 @@ def compute_energy(state):
     E *= -0.25
 
     return E
+
 	
 def compute_magnetization(state):
     N = len(state)
@@ -77,18 +85,8 @@ def mcstep(state, one_over_temp=1.):
         delta_E = 0
         i = random.randint(0, N)
         j = random.randint(0, N)
-        _s = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
-        # boundary condition check
-        if i == 0:
-            _s[1][0] = N - 1
-        elif i == (N-1):
-            _s[0][0] = -(N-1)
-
-        if j == 0:
-            _s[3][1] = N - 1
-        elif j == (N-1):
-            _s[2][1] = -(N-1)
+        _s = set_boundary(i, j, N)
 
         # get delta E for s(i,j)
         for k in range(0, len(_s)):
@@ -108,24 +106,12 @@ def mcstep(state, one_over_temp=1.):
 	
 
 # =============================================================================
-# Other Functions
-# =============================================================================
-def clear_screen():
-    if sys.platform == "win32":
-        os.system('cls')
-    else:
-        os.system('clear')
-
-
-# =============================================================================
 # Main
 # =============================================================================
 if __name__ == "__main__":
 
     N = LAT_DIMEN
     num_steps = NUM_STEPS
-
-    clear_screen()
 
     arg_len = len(sys.argv) - 1
     error = False
@@ -148,7 +134,6 @@ if __name__ == "__main__":
     C = [] # Specific Heat
     X = [] # Susceptibility
 
-    num_steps = 1000
     for m in range(len(T)):
         Es = [] 
         E2s = []
@@ -156,8 +141,16 @@ if __name__ == "__main__":
         M2s = []
 
         state = initialize(N, random='yes')
-        for i in range(1000): # Run for some steps to achieve equilibrium
+
+        if (m == 0):
+            plt.figure(figsize=(4,4))
+            ax = plt.subplot(111)
+            plot_state(state, ax, 'Initial state')
+
+        sys.exit(0)
+        for i in range(NUM_EQUIL): # Run for some steps to achieve equilibrium
             state = mcstep(state, 1./T[m]) # before collecting statistics
+        
         for i in range(num_steps): # Now sample states for num_steps and compute statistics
             state = mcstep(state, 1./T[m])
 
@@ -174,9 +167,6 @@ if __name__ == "__main__":
     for i in range(len(M)):
         M[i] = abs(M[i])
 
-    plt.figure(figsize=(4,4))
-    ax = plt.subplot(111)
-    plot_state(state, ax, 'Initial state')
 
     fig = plt.figure(figsize=(20, 10));
     plt.subplot(2, 2, 1 );
