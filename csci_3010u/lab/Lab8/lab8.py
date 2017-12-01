@@ -1,12 +1,13 @@
-import random
-import simpy
-import numpy as np
-import matplotlib.pyplot as plt
+import random, simpy, numpy as np, matplotlib.pyplot as plt
+from scipy.stats import norm
 
 
 RANDOM_SEED = 42
-NUM_MACHINES = 3 # Number of machines in the carwash
-WASHTIME = 10 # Minutes it takes to clean a car
+NUM_WASH_STATIONS = 9 # Number of machines in the carwash
+NUM_DRY_STATIONS = 3 # Number of machines in the carwash
+ARRIVALTIME = [3, 4, 5, 3, 3, 4, 9, 10]
+WASHTIME = [5, 5, 5, 6, 6, 5, 5, 5, 5] # Minutes it takes to clean a car
+DRYTIME = [1.5, 1.5, 1.7, 1.5, 1.5, 1.5, 1.7, 1.5, 1.4] # Minutes it takes to clean a car
 T_INTER = 3 # Create a car every ~7 minutes
 SIM_TIME = 200 # Simulation time in minutes
 
@@ -17,59 +18,86 @@ stats['totaltimes'] = []
 
 class Carwash(object):
     """
-    A carwash has a limited number of machines (``NUM_MACHINES``) to clean cars in parallel.
-    Cars have to request one of the machines. When they got one, they can start the washing
-    processes and wait for it to finish (which takes ``washtime`` minutes).
+    A carwash has a limited number of machines (``NUM_MACHINES``) to clean cars
+    in parallel. Cars have to request one of the machines. When they got one,
+    they can start the washing processes and wait for it to finish (which takes
+    ``washtime`` minutes).
     """
-    def __init__(self, env, num_machines, washtime):
-	self.env = env
-	self.machine = simpy.Resource(env, num_machines)
-	self.washtime = washtime
+    def __init__(self, env, num_wash_stations, num_dry_stations, wash_time, dry_time):
+    	self.env = env
+        self.wash_station = simpy.Resource(env, num_wash_stations)
+    	self.dry_station = simpy.Resource(env, num_dry_stations)
+    	self.wash_time = wash_time
+        self.dry_time = dry_time
+
 		
     def wash(self, car):
-	"""The washing processes. It takes a ``car`` processes and tries to clean it."""
-	yield self.env.timeout(random.randint(WASHTIME - 2, WASHTIME + 2))
-	print("Carwash removed %d%% of %s's dirt." % (random.randint(50, 99), car))
+    	"""The washing processes. It takes a ``car`` processes and tries to wash it."""
+    	yield self.env.timeout(random.choice(self.wash_time))
+
+    def dry(self, car):
+        """The drying processes. It takes a ``car`` processes and tries to dry it."""
+        yield self.env.timeout(random.choice(self.dry_time))
 
 def car(env, name, cw, stats):
+    """
+    The car process (each car has a ``name``) arrives at the carwash(``cw``) 
+    and requests a cleaning machine. It then starts the washing process, waits
+    for it to finish and leaves to never come back ...
+    """
     stats['cars'].append(name)
-    print('%s arrives at the carwash at %.2f.' % (name, env.now))
     arrival_time = env.now
-    with cw.machine.request() as request:
-		
-	yield request
-	print('%s enters the carwash at %.2f.' % (name, env.now))
-	enter_time = env.now
-	yield env.process(cw.wash(name))
-		
-	print('%s leaves the carwash at %.2f.' % (name, env.now))
-	leave_time = env.now
+    with cw.wash_station.request() as request:
+    	yield request
+    	print('%s enters the car wash machine at %.2f.' % (name, env.now))
+    	enter_time = env.now
+    	yield env.process(cw.wash(name))
+    		
+    	print('%s leaves the car wash machine at %.2f.' % (name, env.now))
+
+        stats['waittimes'].append(round(enter_time - arrival_time, 2))
+
+
+    dry_arrival_time = env.now
+    with cw.dry_station.request() as request:
+        yield request
+        print('%s enters the car dry machine at %.2f.' % (name, env.now))
+        enter_time = env.now
+        yield env.process(cw.dry(name))
+            
+        print('%s leaves the car dry machine at %.2f.' % (name, env.now))
+        leave_time = env.now
+
+        stats['waittimes'][-1] += (round(enter_time - dry_arrival_time, 2))
+        stats['totaltimes'].append(round(leave_time - arrival_time, 2))
+
 	
-    stats['waittimes'].append(enter_time - arrival_time)
-    stats['totaltimes'].append(leave_time - arrival_time)
-	
-def setup(env, num_machines, washtime, t_inter, stats): 
-    """Create a carwash, a number of initial cars and keep creating cars approx. every ``t_inter`` minutes."""
+def setup(env, num_wash_stations, num_dry_stations, wash_time, dry_time, arrival_time, stats): 
+    """
+    Create a carwash, a number of initial cars and keep creating cars approx.
+    every ``t_inter`` minutes.
+    """
     # Create the carwash
-    carwash = Carwash(env, num_machines, washtime)
+    carwash = Carwash(env, num_wash_stations, num_dry_stations, wash_time, dry_time)
     # Create 4 initial cars
     for i in range(4):
-	env.process(car(env, 'Car %d' % i, carwash, stats))
+	   env.process(car(env, 'Car %d' % i, carwash, stats))
 
     # Create more cars while the simulation is running
     while True:
-	yield env.timeout(random.randint(t_inter - 2, t_inter + 2))
-	i += 1
-	env.process(car(env, 'Car %d' % i, carwash, stats))
+	   yield env.timeout(random.choice(arrival_time))
+	   i += 1
+	   env.process(car(env, 'Car %d' % i, carwash, stats))
+
+
 
 # Setup and start the simulation
-		
 print('Carwash')
 random.seed(RANDOM_SEED) 	
 
 # Create an environment and start the setup process
 env = simpy.Environment()
-env.process(setup(env, NUM_MACHINES, WASHTIME, T_INTER, stats))
+env.process(setup(env, NUM_WASH_STATIONS, NUM_DRY_STATIONS, WASHTIME, DRYTIME, ARRIVALTIME, stats))
 
 # Execute!	
 env.run(until=SIM_TIME)
@@ -77,8 +105,13 @@ env.run(until=SIM_TIME)
 print 'stats'
 print stats
 
-plt.figure()
+plt.figure(1)
 plt.hist(stats['totaltimes'], color='crimson', edgecolor='black', linewidth=1.2)
+plt.xlabel('Time (in minutes)')
+plt.title('Total time spent in the carwash')
+plt.ylabel('Number of cars')
+plt.figure(2)
+plt.hist(stats['waittimes'], color='crimson', edgecolor='black', linewidth=1.2)
 plt.xlabel('Time (in minutes)')
 plt.title('Total time spent in the carwash')
 plt.ylabel('Number of cars')
