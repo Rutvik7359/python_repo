@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import ode
 
-use_rk4 = True
-
 # set up the colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -33,12 +31,12 @@ class HeavenlyBody(pygame.sprite.Sprite):
     def __init__(self, name, mass, color=WHITE, radius=0, imagefile=None):
         pygame.sprite.Sprite.__init__(self)
 
-        #if imagefile:
-        #    self.image = load_image(imagefile)
-        #else:
-        self.image = pygame.Surface([radius*2, radius*2])
-        self.image.fill(BLACK)
-        pygame.draw.circle(self.image, color, (radius, radius), radius, radius)
+        if imagefile:
+            self.image = load_image(imagefile)
+        else:
+            self.image = pygame.Surface([radius*2, radius*2])
+            self.image.fill(BLACK)
+            pygame.draw.circle(self.image, color, (radius, radius), radius, radius)
 
         self.rect = self.image.get_rect()
         self.pos = np.array([0,0])
@@ -48,11 +46,6 @@ class HeavenlyBody(pygame.sprite.Sprite):
         self.name = name
         self.G = G
         self.distances = []
-
-        #if use_rk4:
-            #self.r = ode(self.f)
-            #self.r.set_integrator('dop853')
-            #self.r.set_initial_value([self.pos[0], self.pos[1], self.vel[0], self.vel[1], self.G], self.t)
 
     def set_pos(self, pos):
         self.pos = np.array(pos)
@@ -71,11 +64,11 @@ class HeavenlyBody(pygame.sprite.Sprite):
                 u = d / r
                 f = u * G * self.mass * other.mass / (r*r)
 
-                print ('Force on ' +  self.name + ' from ' + other.name + ' = ' + str(f))
-                print ('Mass-1 ' + str(self.mass) + ' mass-2 ' + str(other.mass))
-                print ('G ' + str(self.G))
-                print ('Distance ' + str(r))
-                print ('Vel ' + str(self.vel))
+                print 'Force on', self.name, ' from', other.name, '=', f
+                print 'Mass-1', self.mass, 'mass-2', other.mass
+                print 'G', self.G
+                print 'Distance', r
+                print 'Vel', self.vel
 
                 new_vel = self.vel + dt * f / self.mass
                 new_pos = self.pos + dt * self.vel
@@ -107,9 +100,9 @@ class Universe:
             p = self.to_screen(obj.pos)
 
             if False: # Set this to True to print the following values
-                print ('Name ' + obj.name)
-                print ('Position in simulation space ' + str(obj.pos))
-                print ('Position on screen ' + str(p))
+                print 'Name', obj.name
+                print 'Position in simulation space', obj.pos
+                print 'Position on screen', p
 
             # Update sprite locations
             obj.rect.x, obj.rect.y = p[0]-obj.radius, p[1]-obj.radius
@@ -120,7 +113,7 @@ class Universe:
 
 def main():
 
-    print ('Press q to quit')
+    print 'Press q to quit'
 
     # Initializing pygame
     pygame.init()
@@ -136,7 +129,7 @@ def main():
     earth.set_pos([0, 0])
     moon = HeavenlyBody('moon', Moon_Mass, WHITE, radius=10)
     moon.set_pos([int(Distance), 0])
-    moon.set_vel([0, 10000]) # Initial velocity of our moon
+    moon.set_vel([0, 100]) # Initial velocity of our moon
 
     universe.add_body(earth)
     universe.add_body(moon)
@@ -146,7 +139,7 @@ def main():
 
     frame = 0
     while frame < total_frames:
-        print ('Frame number ' + str(frame)) 
+        print 'Frame number', frame        
 
         event = pygame.event.poll()
         if event.type == pygame.QUIT:
