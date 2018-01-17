@@ -3,7 +3,7 @@ from util import *
 # =============================================================================
 # Constants
 # =============================================================================
-WEIGHT_CAP = 75.0 #lbs
+WEIGHT_CAP = 10.0 #lbs
 NUM_ITEMS  = 10
 VALUE_MAX  = 200
 
@@ -81,6 +81,7 @@ if __name__ == "__main__":
 
         items.append(Item(weight, value))
 
+    items = [Item(1, 100), Item(10, 99)]
     items, opt_value = get_knapsack(weight_cap, items)
 
     print_table(items)   
