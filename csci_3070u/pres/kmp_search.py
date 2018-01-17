@@ -104,5 +104,5 @@ def kmp_search(search_word, text):
 
 #                                      1         2
 #                 0123456    0123456789012345678901234567
-print kmp_search("ABABDAB", "ABC  ABCDAB AABABDABABDABCAB")
+print kmp_search("ABACABABA", "ABC  ABCDAB AABABDABABDABCAB")
 
