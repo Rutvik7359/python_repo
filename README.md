@@ -14,6 +14,9 @@ Labs                          | Assignments
 [Lab 9](csci_3010u/lab/Lab9/) |
 [Lab 10](csci_3010u/lab/Lab10/)  |  
 
-
+## (CSCI 3070U) Algorithms:
+Assignments                   | Presentation
+------------------------------|-----------------------------------
+[L](csci_3070u/ass/A1/) |  
 
 
