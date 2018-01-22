@@ -10,13 +10,11 @@ Labs                          | Assignments
 [Lab 5 - Calculating π Using Monte Carlo](csci_3010u/lab/Lab5/) |
 [Lab 6 - Discrete Distribution](csci_3010u/lab/Lab6/) |
 [Lab 7 - Ising Model](csci_3010u/lab/Lab7/) |
-[Lab 8](csci_3010u/lab/Lab8/) |
-[Lab 9](csci_3010u/lab/Lab9/) |
-[Lab 10](csci_3010u/lab/Lab10/)  |  
+[Lab 8 - Carwash Discrete Event Simulation](csci_3010u/lab/Lab8/) |
 
 ## (CSCI 3070U) Algorithms:
 Assignments                   | Presentation
 ------------------------------|-----------------------------------
-[L](csci_3070u/ass/A1/) |  
+[A1 - Divide and Conquer/Max Heap](csci_3070u/ass/A1/) |  
 
 
