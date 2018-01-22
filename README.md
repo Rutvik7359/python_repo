@@ -15,6 +15,7 @@ Labs                          | Assignments
 ## (CSCI 3070U) Algorithms:
 Assignments                   | Presentation
 ------------------------------|-----------------------------------
-[A1 - Divide and Conquer/Max Heap](csci_3070u/ass/A1/) |  
+[A1 - Divide and Conquer/Max Heap](csci_3070u/ass/A1/) |  [Knuth–Morris–Pratt Search](csci_3070u/pres/)
+[A2 - Recurrences/Heapsort/Dynamic Programming](csci_3070u/ass/A2/) |  
 
 
