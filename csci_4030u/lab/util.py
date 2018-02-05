@@ -1,6 +1,7 @@
 from numpy import random
 from collections import Counter
 import numpy as np, operator as op, sys, os.path, os
+import itertools
 
 
 # =============================================================================
