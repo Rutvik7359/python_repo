@@ -1,1 +1,1 @@
-[embed]Lab3_Report.pdf[/embed]
+![alt text](Lab3_Report-1.jpg)
