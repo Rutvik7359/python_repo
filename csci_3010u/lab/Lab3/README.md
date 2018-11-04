@@ -1,5 +1,1 @@
-<object data="Lab3_Report.pdf" type="application/pdf" width="700px" height="700px">
-    <embed src="Lab3_Report.pdf">
-        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="Lab3_Report.pdf">Download PDF</a>.</p>
-    </embed>
-</object>
+[embed]Lab3_Report.pdf[/embed]
